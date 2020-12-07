@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Authentication", "D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Services", "DocKick.Services\DocKick.Services.csproj", "{1A7D8789-BBF6-42A4-900E-1E10D35E6BE9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Exceptions", "DocKick.Exceptions\DocKick.Exceptions.csproj", "{B5DCC979-3281-49CB-9F1D-59C1045573A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{1A7D8789-BBF6-42A4-900E-1E10D35E6BE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A7D8789-BBF6-42A4-900E-1E10D35E6BE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A7D8789-BBF6-42A4-900E-1E10D35E6BE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5DCC979-3281-49CB-9F1D-59C1045573A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5DCC979-3281-49CB-9F1D-59C1045573A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5DCC979-3281-49CB-9F1D-59C1045573A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5DCC979-3281-49CB-9F1D-59C1045573A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

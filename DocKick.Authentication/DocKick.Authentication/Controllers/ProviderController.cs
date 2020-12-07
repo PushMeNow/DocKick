@@ -15,9 +15,18 @@ namespace DocKick.Authentication.Controllers
             _providerService = providerService;
         }
 
+        [HttpGet]
         public async Task<IEnumerable<AuthenticationProviderModel>> GetProviders()
         {
             return await _providerService.GetProviders();
+        }
+        
+        public IActionResult ExternalLogin(string providerName)
+        {
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account");
+            var properties = _providerService.GetAuthenticationProperties(providerName, redirectUrl);
+
+            return new ChallengeResult(providerName, properties);
         }
     }
 }

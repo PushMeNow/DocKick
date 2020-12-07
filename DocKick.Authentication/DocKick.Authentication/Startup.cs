@@ -1,3 +1,4 @@
+using DocKick.Authentication.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,8 @@ namespace DocKick.Authentication
                                                         Version = "v1"
                                                     });
                                    });
+
+            services.AddDependencies();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DocKick.Services.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace DocKick.Services
@@ -25,6 +26,11 @@ namespace DocKick.Services
                                              DisplayName = q.DisplayName
                                          })
                             .ToArray();
+        }
+
+        public AuthenticationProperties GetAuthenticationProperties(string providerName, string redirectUrl)
+        {
+            return _signInManager.ConfigureExternalAuthenticationProperties(providerName, redirectUrl);
         }
     }
 }

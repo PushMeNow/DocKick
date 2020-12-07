@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
+      <ProjectReference Include="..\DocKick.Services\DocKick.Services.csproj" />
     </ItemGroup>
 
 </Project>

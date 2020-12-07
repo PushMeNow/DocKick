@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockKick.Authentication", "DockKick.Authentication\DockKick.Authentication.csproj", "{4A3F1849-90C4-4851-A2C8-CE753E5985E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Authentication", "DocKick.Authentication\DocKick.Authentication.csproj", "{4A3F1849-90C4-4851-A2C8-CE753E5985E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Services", "DocKick.Services\DocKick.Services.csproj", "{1A7D8789-BBF6-42A4-900E-1E10D35E6BE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +14,9 @@ Global
 		{4A3F1849-90C4-4851-A2C8-CE753E5985E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A3F1849-90C4-4851-A2C8-CE753E5985E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A3F1849-90C4-4851-A2C8-CE753E5985E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A7D8789-BBF6-42A4-900E-1E10D35E6BE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A7D8789-BBF6-42A4-900E-1E10D35E6BE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A7D8789-BBF6-42A4-900E-1E10D35E6BE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A7D8789-BBF6-42A4-900E-1E10D35E6BE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

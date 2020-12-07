@@ -1,18 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-namespace DockKick.Authentication
+namespace DocKick.Authentication
 {
     public class Startup
     {
@@ -32,7 +25,7 @@ namespace DockKick.Authentication
                                        c.SwaggerDoc("v1",
                                                     new OpenApiInfo
                                                     {
-                                                        Title = "DockKick.Authentication",
+                                                        Title = "DocKick.Authentication",
                                                         Version = "v1"
                                                     });
                                    });
@@ -44,7 +37,7 @@ namespace DockKick.Authentication
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DockKick.Authentication v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DocKick.Authentication v1"));
             }
 
             app.UseHttpsRedirection();

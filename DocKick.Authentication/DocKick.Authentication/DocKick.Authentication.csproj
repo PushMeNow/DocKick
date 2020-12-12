@@ -13,8 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\DocKick.Data\DocKick.Data.csproj" />
       <ProjectReference Include="..\DocKick.Services\DocKick.Services.csproj" />
-      <ProjectReference Include="..\DockKick.Data\DockKick.Data.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 using DocKick.Authentication.Extensions;
-using DockKick.Data.Extensions;
+using DocKick.Data.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -60,7 +60,7 @@ namespace DocKick.Authentication
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DocKick.Authentication v1"));
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 

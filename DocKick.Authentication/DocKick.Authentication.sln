@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Services", "DocKick
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Exceptions", "DocKick.Exceptions\DocKick.Exceptions.csproj", "{B5DCC979-3281-49CB-9F1D-59C1045573A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockKick.Data", "DockKick.Data\DockKick.Data.csproj", "{4B10C710-2CD5-4B26-8B01-C13D810C252D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Data", "DocKick.Data\DocKick.Data.csproj", "{4B10C710-2CD5-4B26-8B01-C13D810C252D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Data.Entities", "DocKick.Data.Entities\DocKick.Data.Entities.csproj", "{D9E05030-721E-4768-8ECC-EBE8E39EA524}"
 EndProject

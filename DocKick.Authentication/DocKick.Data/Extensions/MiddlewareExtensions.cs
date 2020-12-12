@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DockKick.Data.Extensions
+namespace DocKick.Data.Extensions
 {
     public static class MiddlewareExtensions
     {

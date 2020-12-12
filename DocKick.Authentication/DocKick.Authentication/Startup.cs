@@ -1,4 +1,5 @@
 using DocKick.Authentication.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -15,11 +16,24 @@ namespace DocKick.Authentication
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddGoogle(options =>
+                               {
+                                   options.ClientId = Configuration["Authentication:Google:ClientId"];
+                                   options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                               })
+                    .AddGitHub(options =>
+                               {
+                                   options.ClientId = Configuration["Authentication:GitHub:ClientId"];
+                                   options.ClientSecret = Configuration["Authentication:GitHub:ClientSecret"];
+                                   options.Scope.Add(Configuration["Authentication:GitHub:Scope"]);
+                               });
 
             services.AddSwaggerGen(c =>
                                    {

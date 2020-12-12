@@ -1,4 +1,5 @@
 using DocKick.Authentication.Extensions;
+using DockKick.Data.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,6 +47,8 @@ namespace DocKick.Authentication
                                    });
 
             services.AddDependencies();
+
+            services.AddDatabaseConfigs(Configuration.GetConnectionString("DockKick.Authentication"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

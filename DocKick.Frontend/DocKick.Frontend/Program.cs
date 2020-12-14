@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace DockKick.Frontend
+namespace DocKick.Frontend
 {
     public class Program
     {

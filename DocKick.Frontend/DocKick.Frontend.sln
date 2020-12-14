@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockKick.Frontend", "DockKick.Frontend\DockKick.Frontend.csproj", "{F0A6FA80-8ACB-435B-B588-96E81ADF8D77}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Frontend", "DocKick.Frontend\DocKick.Frontend.csproj", "{F0A6FA80-8ACB-435B-B588-96E81ADF8D77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

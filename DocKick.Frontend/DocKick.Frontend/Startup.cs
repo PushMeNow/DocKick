@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace DockKick.Frontend
+namespace DocKick.Frontend
 {
     public class Startup
     {

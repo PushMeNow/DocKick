@@ -7,8 +7,8 @@ namespace DocKick.Authentication.Extensions
     {
         public static IServiceCollection AddDependencies(this IServiceCollection services)
         {
-            services.AddScoped<IProviderService, ProviderService>();
-            services.AddScoped<IAccountService, AccountService>();
+            // services.AddScoped<IProviderService, ProviderService>();
+            // services.AddScoped<IAccountService, AccountService>();
 
             return services;
         }

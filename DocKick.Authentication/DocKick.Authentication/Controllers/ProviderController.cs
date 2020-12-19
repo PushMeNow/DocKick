@@ -20,7 +20,7 @@ namespace DocKick.Authentication.Controllers
         {
             return await _providerService.GetProviders();
         }
-        
+
         public IActionResult ExternalLogin(string providerName)
         {
             var redirectUrl = Url.Action("ExternalLoginCallback", "Account");

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocKick.Data.Entities.Users;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DocKick.Data.Extensions
@@ -9,12 +11,16 @@ namespace DocKick.Data.Extensions
         {
             services.AddDbContext<DocKickAuthDbContext>(options =>
                                                         {
-                                                            options.UseNpgsql(connString);
+                                                            options.UseNpgsql(connString,
+                                                                              builder =>
+                                                                              {
+                                                                                  builder.MigrationsAssembly(typeof(DocKickAuthDbContext).Namespace);
+                                                                              });
                                                         });
 
-            // services.AddIdentity<User, Role>()
-            //         .AddEntityFrameworkStores<DocKickAuthDbContext>()
-            //         .AddDefaultTokenProviders();
+            services.AddIdentity<User, Role>()
+                    .AddEntityFrameworkStores<DocKickAuthDbContext>()
+                    .AddDefaultTokenProviders();
 
             return services;
         }

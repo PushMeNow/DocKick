@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -23,49 +24,7 @@ namespace DocKick.Services
             _signInManager = signInManager;
             _authSettings = authSettings;
         }
-
-        // public async Task<ExternalUserInfoModel> GetUserInfoFromExternalCallback()
-        // {
-        //     var info = await _signInManager.GetExternalLoginInfoAsync();
-        //
-        //     ExceptionHelper.ThrowIfNull<ExternalAuthenticationException>(info);
-        //
-        //     var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
-        //
-        //     ExceptionHelper.ThrowIfNull<ExternalAuthenticationException>(result);
-        //
-        //     if (!result.Succeeded)
-        //     {
-        //         ExceptionHelper.ThrowExternalAuthentication();
-        //     }
-        //
-        //     return new ExternalUserInfoModel
-        //            {
-        //                Email = info.Principal.FindFirstValue(ClaimTypes.Email),
-        //                UserName = info.Principal.FindFirstValue(ClaimTypes.Name)
-        //            };
-        // }
-        //
-        // public async Task<IdentityResult> ExternalLogin(ExternalUserInfoModel model)
-        // {
-        //     var user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
-        //
-        //     if (user is not null)
-        //     {
-        //         return IdentityResult.Success;
-        //     }
-        //
-        //     user = new User
-        //            {
-        //                Email = model.Email,
-        //                UserName = model.Email
-        //            };
-        //
-        //     var result = await _signInManager.UserManager.CreateAsync(user);
-        //
-        //     return result;
-        // }
-
+        
         public async Task<AuthenticatedUserResult> Authenticate(string token)
         {
             ExceptionHelper.ThrowIfNull(token, nameof(token));
@@ -85,10 +44,26 @@ namespace DocKick.Services
 
                 ExceptionHelper.ThrowIfTrue<AuthenticationException>(!result.Succeeded);
             }
+            
+            return GetAuthenticatedUserResult(user.Email);
+        }
 
+        public async Task<AuthenticatedUserResult> Authenticate(InternalUserAuthModel model)
+        {
+            ExceptionHelper.ThrowIfNull(model, nameof(model));
+
+            var user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
+
+            ExceptionHelper.ThrowIfNull<AuthenticationException>(user);
+
+            return GetAuthenticatedUserResult(user.Email);
+        }
+
+        private AuthenticatedUserResult GetAuthenticatedUserResult(string email)
+        {
             var claims = new[]
                          {
-                             new Claim(JwtRegisteredClaimNames.Email, user.Email)
+                             new Claim(JwtRegisteredClaimNames.Email, email)
                          };
 
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_authSettings.TokenSecret));
@@ -96,7 +71,7 @@ namespace DocKick.Services
 
             var authenticatedUser = new AuthenticatedUserResult
                                     {
-                                        Email = user.Email,
+                                        Email = email,
                                         Token = new JwtSecurityToken(string.Empty,
                                                                      string.Empty,
                                                                      claims,

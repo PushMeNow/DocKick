@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using DocKick.Authentication.Models;
 using DocKick.DataTransferModels.User;
 using DocKick.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +23,13 @@ namespace DocKick.Authentication.Controllers
             var result = await _accountService.Authenticate(model.TokenId);
 
             return result;
+        }
+
+        [AllowAnonymous]
+        [HttpPost("internal-login")]
+        public async Task<AuthenticatedUserResult> InternalLogin([FromBody] InternalUserAuthModel model)
+        {
+            return await _accountService.Authenticate(model);
         }
     }
 }

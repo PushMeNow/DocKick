@@ -6,5 +6,6 @@ namespace DocKick.Services
     public interface IAccountService
     {
         Task<AuthenticatedUserResult> Authenticate(string token);
+        Task<AuthenticatedUserResult> Authenticate(InternalUserAuthModel model);
     }
 }

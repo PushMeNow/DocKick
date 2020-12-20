@@ -1,4 +1,4 @@
-﻿namespace DocKick.Authentication.Models
+﻿namespace DocKick.DataTransferModels.User
 {
     public class UserAuthModel
     {

@@ -1,14 +1,15 @@
 ﻿import React, { Component } from "react";
 import { GoogleLogout } from "react-google-login";
-import authConfig from "../auth-config";
-import { logout } from "../authActions";
+import authConfig from "../../../auth-config";
+import { logout } from "../../../reducers/authActions";
 import { connect } from "react-redux"
+import { Button } from "react-bootstrap";
 
 class DocKickGoogleLogout extends Component {
     onSuccess = () => {
         this.props.logout();
     };
-    
+
     render() {
         return !this.props.auth.isAuthenticated ?
             (
@@ -17,7 +18,11 @@ class DocKickGoogleLogout extends Component {
             : (
                 <div>
                     <GoogleLogout clientId={ authConfig.google.clientId }
-                                  buttonText="Logout"
+                                  render={ renderProps => (
+                                      <Button variant="outline-secondary"
+                                              onClick={ renderProps.onClick }
+                                              disabled={ renderProps.disabled }>Logout</Button>)
+                                  }
                                   onLogoutSuccess={ this.onSuccess } />
                 </div>
             )

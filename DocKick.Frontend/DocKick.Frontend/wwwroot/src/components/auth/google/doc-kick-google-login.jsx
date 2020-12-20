@@ -1,8 +1,9 @@
 ﻿import React, { Component } from 'react';
 import GoogleLogin from "react-google-login";
-import authConfig from "../auth-config";
+import authConfig from "../../../auth-config";
 import { connect } from "react-redux";
-import { login } from "../authActions";
+import { login } from "../../../reducers/authActions";
+import { Button } from "react-bootstrap";
 
 class DocKickGoogleLogin extends Component {
     responseGoogle = (response) => {
@@ -29,11 +30,17 @@ class DocKickGoogleLogin extends Component {
                 <div>Authenticated</div>
             )
             : (
-                <div>
-                    <GoogleLogin clientId={ authConfig.google.clientId }
-                                 buttonText="Push"
-                                 onSuccess={ this.responseGoogle }
-                                 onFailure={ this.responseGoogle } />
+                <div className="mt-2">
+                    <GoogleLogin
+                        clientId={ authConfig.google.clientId }
+                        render={ renderProps => (
+                            <Button variant="outline-secondary"
+                                    onClick={ renderProps.onClick }
+                                    disabled={ renderProps.disabled }>Google</Button>)
+                        }
+                        onSuccess={ this.responseGoogle }
+                        onFailure={ this.responseGoogle }
+                        cookiePolicy={ 'single_host_origin' } />
                 </div>
             );
     }

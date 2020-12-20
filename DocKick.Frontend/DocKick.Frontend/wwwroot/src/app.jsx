@@ -1,19 +1,25 @@
 ﻿import React from "react";
-import DocKickGoogleLogin from "./auth/google/doc-kick-google-login";
-import DocKickGoogleLogout from "./auth/google/doc-kick-google-logout";
-
-class Hello extends React.Component {
-    render() {
-        return <h1>Привет, React.JS</h1>;
-    }
-}
+import Header from "./components/header/header";
+import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import PrivateRoute from "./components/private-route";
+import PrivateLayout from "./layouts/router-layouts/private-layout";
+import PublicLayout from "./layouts/router-layouts/public-layout";
+import { Container } from "react-bootstrap";
 
 const App = React.memo(() => (
-    <div>
-        <Hello />
-        <DocKickGoogleLogin />
-        <DocKickGoogleLogout />
-    </div>
+    <>
+        <BrowserRouter>
+            <Header />
+            <Container>
+                <Switch>
+                    <Route path="/login"
+                           component={ PublicLayout } />
+                    <PrivateRoute path="/"
+                                  component={ PrivateLayout } />
+                </Switch>
+            </Container>
+        </BrowserRouter>
+    </>
 ));
 
 export default App;

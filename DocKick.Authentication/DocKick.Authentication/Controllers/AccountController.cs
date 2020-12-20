@@ -1,5 +1,8 @@
 ﻿using System.Threading.Tasks;
+using DocKick.Authentication.Models;
+using DocKick.DataTransferModels.User;
 using DocKick.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocKick.Authentication.Controllers
@@ -14,13 +17,13 @@ namespace DocKick.Authentication.Controllers
             _accountService = accountService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ExternalLoginCallback()
+        [AllowAnonymous]
+        [HttpPost("google-login")]
+        public async Task<AuthenticatedUserResult> GoogleLogin([FromBody] UserAuthModel model)
         {
-            var userInfo = await _accountService.GetUserInfoFromExternalCallback();
-            var loginResult = await _accountService.ExternalLogin(userInfo);
+            var result = await _accountService.Authenticate(model.TokenId);
 
-            return Redirect("/");
+            return result;
         }
     }
 }

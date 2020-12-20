@@ -9,10 +9,30 @@ namespace DocKick.Exceptions
             throw new ExternalAuthenticationException();
         }
 
-        public static void ThrowIfNull<TException>(object @value)
+        public static void ThrowIfNull<TException>(object value)
             where TException : Exception, new()
         {
-            throw new TException();
+            if (value is null)
+            {
+                throw new TException();
+            }
+        }
+        
+        public static void ThrowIfNull(object value, string paramName)
+        {
+            if (value is null)
+            {
+                throw new ArgumentNullException(paramName);
+            }
+        }
+
+        public static void ThrowIfTrue<TException>(bool condition)
+            where TException : Exception, new()
+        {
+            if (condition)
+            {
+                throw new TException();
+            }
         }
     }
 }

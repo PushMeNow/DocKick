@@ -1,12 +1,10 @@
 ﻿using System.Threading.Tasks;
-using DocKick.Services.Models;
-using Microsoft.AspNetCore.Identity;
+using DocKick.DataTransferModels.User;
 
 namespace DocKick.Services
 {
     public interface IAccountService
     {
-        Task<ExternalUserInfoModel> GetUserInfoFromExternalCallback();
-        Task<IdentityResult> ExternalLogin(ExternalUserInfoModel model);
+        Task<AuthenticatedUserResult> Authenticate(string token);
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using DocKick.Authentication.Extensions;
 using DocKick.Data.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace DocKick.Authentication
@@ -27,17 +29,19 @@ namespace DocKick.Authentication
             services.AddControllers();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddGoogle(options =>
-                               {
-                                   options.ClientId = Configuration["Authentication:Google:ClientId"];
-                                   options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
-                               })
-                    .AddGitHub(options =>
-                               {
-                                   options.ClientId = Configuration["Authentication:GitHub:ClientId"];
-                                   options.ClientSecret = Configuration["Authentication:GitHub:ClientSecret"];
-                                   options.Scope.Add(Configuration["Authentication:GitHub:Scope"]);
-                               });
+                    .AddJwtBearer(config =>
+                                  {
+                                      config.RequireHttpsMetadata = false;
+                                      config.SaveToken = true;
+
+                                      config.TokenValidationParameters = new TokenValidationParameters
+                                                                         {
+                                                                             ValidateIssuerSigningKey = false,
+                                                                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Authentication:TokenSecret"])),
+                                                                             ValidateIssuer = false,
+                                                                             ValidateAudience = false
+                                                                         };
+                                  });
 
             services.AddSwaggerGen(c =>
                                    {
@@ -50,7 +54,7 @@ namespace DocKick.Authentication
                                    });
 
             services.AddDatabaseConfigs(Configuration.GetConnectionString("DocKickAuthentication"));
-            services.AddDependencies();
+            services.AddDependencies(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

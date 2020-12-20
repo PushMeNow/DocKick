@@ -3,7 +3,22 @@ import GoogleLogin from "react-google-login";
 import authConfig from "../auth-config";
 
 const responseGoogle = (response) => {
-    console.log(response);
+    const tokenBlob = new Blob([JSON.stringify({tokenId: response.tokenId}, null, 2)], {type: 'application/json'});
+    const options = {
+        method: 'POST',
+        body: tokenBlob,
+        mode: 'cors',
+        cache: 'default'
+    };
+    fetch(authConfig.google.loginEndpoint, options)
+        .then(r => {
+            r.json()
+                .then(user => {
+                debugger;
+                const token = user.token;
+                console.log(token);
+            });
+        })
 }
 
 class DocKickGoogleLogin extends Component {

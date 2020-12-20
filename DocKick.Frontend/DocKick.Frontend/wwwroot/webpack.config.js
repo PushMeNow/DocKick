@@ -1,14 +1,9 @@
 ﻿const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
     entry: './src/index.jsx',
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-    devServer: {
-      contentBase: './dist',
-      hot: true  
-    },
     module: {
         rules: [
             {
@@ -23,12 +18,6 @@ module.exports = {
             }
         ],
     },
-    plugins: [
-        new CleanWebpackPlugin(),
-        new HtmlWebpackPlugin({
-            title: 'Hot Module Replacement',
-        })
-    ],
     resolve: {extensions: ['*', '.js', '.jsx']},
     output: {
         path: path.resolve(__dirname, 'dist/'),

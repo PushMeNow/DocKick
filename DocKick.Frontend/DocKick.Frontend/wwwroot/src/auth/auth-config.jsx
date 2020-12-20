@@ -1,7 +1,9 @@
-﻿const authConfig ={
+﻿import globalConfig from "../config";
+
+const authConfig = {
     google: {
         clientId: '734351612309-0bl0o4vlsmfooue95ellut0fc833scmt.apps.googleusercontent.com',
-        clientSecret: 'R0p2vUf9g8B5J7Ic-026U6YH'
+        loginEndpoint: `${globalConfig.authServerUrl}/account/google-login` 
     }
 };
 

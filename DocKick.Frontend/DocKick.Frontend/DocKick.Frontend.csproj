@@ -2,6 +2,25 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <LangVersion>default</LangVersion>
+        <Root>wwwroot\</Root>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="JavaScriptEngineSwitcher.ChakraCore" Version="3.9.1" />
+      <PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.linux-x64" Version="3.9.1" />
+      <PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.osx-x64" Version="3.9.1" />
+      <PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-arm" Version="3.9.1" />
+      <PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-arm64" Version="3.9.1" />
+      <PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-x64" Version="3.9.1" />
+      <PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-x86" Version="3.9.1" />
+      <PackageReference Include="JavaScriptEngineSwitcher.Extensions.MsDependencyInjection" Version="3.3.0" />
+      <PackageReference Include="React.AspNet" Version="5.2.11" />
+    </ItemGroup>
+
+    <Target Name="ReactBuild" AfterTargets="Build">
+        <Exec WorkingDirectory="$(Root)" Command="npm install" />
+        <Exec WorkingDirectory="$(Root)" Command="npm run build" />
+    </Target>
 
 </Project>

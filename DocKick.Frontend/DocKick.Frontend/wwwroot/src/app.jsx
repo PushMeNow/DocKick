@@ -10,9 +10,9 @@ class Hello extends React.Component {
 
 const App = React.memo(() => (
     <div>
-        <Hello/>
-        <DocKickGoogleLogin/>
-        <DocKickGoogleLogout/>
+        <Hello />
+        <DocKickGoogleLogin />
+        <DocKickGoogleLogout />
     </div>
 ));
 

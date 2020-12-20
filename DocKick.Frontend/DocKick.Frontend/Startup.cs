@@ -1,7 +1,9 @@
+using System;
 using JavaScriptEngineSwitcher.ChakraCore;
 using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using React;
@@ -13,12 +15,10 @@ namespace DocKick.Frontend
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMemoryCache();
-            services.AddHttpContextAccessor();
-            services.AddReact();
-
-            services.AddJsEngineSwitcher(options => options.DefaultEngineName = ChakraCoreJsEngine.EngineName)
-                    .AddChakraCore();
+            services.AddSpaStaticFiles(config =>
+                                       {
+                                           config.RootPath = "wwwroot/build";
+                                       });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -30,16 +30,18 @@ namespace DocKick.Frontend
 
             app.UseHttpsRedirection();
 
-            app.UseReact(config =>
-                         {
-                             config.SetLoadBabel(false)
-                                   .SetLoadReact(false)
-                                   .SetReactAppBuildPath("~/dist/")
-                                   .SetReuseJavaScriptEngines(true);
-                         });
-
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            app.UseSpa(spa =>
+                       {
+                           spa.Options.SourcePath = "wwwroot";
+
+                           if (env.IsDevelopment())
+                           {
+                               spa.UseReactDevelopmentServer("start");
+                           }
+                       });
         }
     }
 }

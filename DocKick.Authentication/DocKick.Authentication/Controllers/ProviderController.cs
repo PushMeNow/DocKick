@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using DocKick.Services;
 using DocKick.Services.Models;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DocKick.Authentication.Controllers
 {
+    [Route("[controller]")]
     public class ProviderController : Controller
     {
         private readonly IProviderService _providerService;
@@ -15,15 +17,17 @@ namespace DocKick.Authentication.Controllers
             _providerService = providerService;
         }
 
-        [HttpGet]
+        [HttpGet("")]
         public async Task<IEnumerable<AuthenticationProviderModel>> GetProviders()
         {
             return await _providerService.GetProviders();
         }
 
-        public IActionResult ExternalLogin(string providerName)
+        [HttpGet("external-login")]
+        [ProducesResponseType(typeof(ChallengeResult), (int)HttpStatusCode.OK)]
+        public IActionResult ExternalLogin([FromQuery] string providerName)
         {
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Account");
+            var redirectUrl = Url.Action(nameof(AccountController.ExternalLoginCallback), "Account");
             var properties = _providerService.GetAuthenticationProperties(providerName, redirectUrl);
 
             return new ChallengeResult(providerName, properties);

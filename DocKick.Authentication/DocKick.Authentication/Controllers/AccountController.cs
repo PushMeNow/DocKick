@@ -1,22 +1,26 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using System.Threading.Tasks;
+using DocKick.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocKick.Authentication.Controllers
 {
+    [Route("[controller]")]
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IAccountService _accountService;
 
-        public AccountController(UserManager<IdentityUser> userManager)
+        public AccountController(IAccountService accountService)
         {
-            _userManager = userManager;
+            _accountService = accountService;
         }
 
-        public async Task ExternalLoginCallback()
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginCallback()
         {
-            throw new NotImplementedException();
+            var userInfo = await _accountService.GetUserInfoFromExternalCallback();
+            var loginResult = await _accountService.ExternalLogin(userInfo);
+
+            return Redirect("/");
         }
     }
 }

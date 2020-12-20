@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Reflection;
 using DocKick.Authentication.Extensions;
 using DocKick.Data.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,6 +24,8 @@ namespace DocKick.Authentication
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddGoogle(options =>
                                {
@@ -44,11 +49,8 @@ namespace DocKick.Authentication
                                                     });
                                    });
 
-            services.AddDependencies();
-
             services.AddDatabaseConfigs(Configuration.GetConnectionString("DocKickAuthentication"));
-
-            services.AddControllers();
+            services.AddDependencies();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -57,13 +59,25 @@ namespace DocKick.Authentication
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DocKick.Authentication v1"));
+
+                app.UseSwaggerUI(c =>
+                                 {
+                                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "DocKick.Authentication v1");
+                                 });
             }
+
+            app.UseCors(config =>
+                        {
+                            config.AllowAnyHeader()
+                                  .AllowAnyMethod()
+                                  .AllowAnyOrigin();
+                        });
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

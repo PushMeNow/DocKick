@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Reflection;
 using System.Text;
 using DocKick.Authentication.Extensions;
 using DocKick.Data.Extensions;
@@ -37,7 +34,9 @@ namespace DocKick.Authentication
                                       config.TokenValidationParameters = new TokenValidationParameters
                                                                          {
                                                                              ValidateIssuerSigningKey = false,
-                                                                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Authentication:TokenSecret"])),
+                                                                             IssuerSigningKey =
+                                                                                 new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration
+                                                                                                              ["Authentication:TokenSecret"])),
                                                                              ValidateIssuer = false,
                                                                              ValidateAudience = false
                                                                          };

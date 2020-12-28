@@ -11,7 +11,7 @@ namespace DocKick.Data.Extensions
         {
             services.AddDbContext<DocKickAuthDbContext>(options =>
                                                         {
-                                                            options.UseNpgsql(connString,
+                                                            options.UseSqlServer(connString,
                                                                               builder =>
                                                                               {
                                                                                   builder.MigrationsAssembly(typeof(DocKickAuthDbContext).Namespace);

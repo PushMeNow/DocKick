@@ -4,8 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using DocKick.Data.Entities.Users;
+using AutoMapper;
 using DocKick.DataTransferModels.User;
+using DocKick.Entities.Users;
 using DocKick.Exceptions;
 using DocKick.Services.Settings;
 using Google.Apis.Auth;
@@ -17,20 +18,27 @@ namespace DocKick.Services
     public class AccountService : IAccountService
     {
         private readonly AuthSettings _authSettings;
+        private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
         private readonly SignInManager<User> _signInManager;
 
-        public AccountService(SignInManager<User> signInManager, AuthSettings authSettings)
+        public AccountService(SignInManager<User> signInManager,
+                              AuthSettings authSettings,
+                              UserManager<User> userManager,
+                              IMapper mapper)
         {
             _signInManager = signInManager;
             _authSettings = authSettings;
+            _userManager = userManager;
+            _mapper = mapper;
         }
-        
+
         public async Task<AuthenticatedUserResult> Authenticate(string token)
         {
             ExceptionHelper.ThrowIfNull(token, nameof(token));
 
             var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings());
-            var user = await _signInManager.UserManager.FindByEmailAsync(payload.Email);
+            var user = await _userManager.FindByEmailAsync(payload.Email);
 
             if (user is null)
             {
@@ -40,11 +48,11 @@ namespace DocKick.Services
                            UserName = payload.Email
                        };
 
-                var result = await _signInManager.UserManager.CreateAsync(user);
+                var result = await _userManager.CreateAsync(user);
 
                 ExceptionHelper.ThrowIfTrue<AuthenticationException>(!result.Succeeded);
             }
-            
+
             return GetAuthenticatedUserResult(user.Email);
         }
 
@@ -52,11 +60,20 @@ namespace DocKick.Services
         {
             ExceptionHelper.ThrowIfNull(model, nameof(model));
 
-            var user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
             ExceptionHelper.ThrowIfNull<AuthenticationException>(user);
 
             return GetAuthenticatedUserResult(user.Email);
+        }
+
+        public async Task<UserProfileModel> GetProfile(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            ExceptionHelper.ThrowNotFoundIfNull(user, "User");
+
+            return _mapper.Map<UserProfileModel>(user);
         }
 
         private AuthenticatedUserResult GetAuthenticatedUserResult(string email)

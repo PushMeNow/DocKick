@@ -1,4 +1,4 @@
-﻿using DocKick.Data.Entities.Users;
+﻿using DocKick.Entities.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

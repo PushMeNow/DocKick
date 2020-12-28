@@ -1,4 +1,6 @@
+using System.Reflection;
 using System.Text;
+using AutoMapper;
 using DocKick.Authentication.Extensions;
 using DocKick.Data.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -54,6 +56,7 @@ namespace DocKick.Authentication
 
             services.AddDatabaseConfigs(Configuration.GetConnectionString("DocKickAuthentication"));
             services.AddDependencies(Configuration);
+            services.AddAutoMapper(Assembly.Load("DocKick.Mapper"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

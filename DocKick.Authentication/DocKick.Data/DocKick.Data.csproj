@@ -24,8 +24,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Entities" />
       <Folder Include="Migrations" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DocKick.Entities\DocKick.Entities.csproj" />
     </ItemGroup>
 
 </Project>

@@ -7,6 +7,7 @@
     
     <ItemGroup>
         <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="5.0.0" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
         <PackageReference Include="Google.Apis.Auth" Version="1.49.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="5.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1" />
@@ -25,6 +26,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DocKick.Data\DocKick.Data.csproj" />
+      <ProjectReference Include="..\DocKick.Mapper\DocKick.Mapper.csproj" />
       <ProjectReference Include="..\DocKick.Services\DocKick.Services.csproj" />
     </ItemGroup>
 

@@ -34,5 +34,13 @@ namespace DocKick.Exceptions
                 throw new TException();
             }
         }
+
+        public static void ThrowNotFoundIfNull(object value, string objName)
+        {
+            if (value is null)
+            {
+                throw new ObjectNotFoundException(objName);
+            }
+        }
     }
 }

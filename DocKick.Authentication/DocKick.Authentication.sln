@@ -10,6 +10,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Data", "DocKick.Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.DataTransferModels", "DocKick.DataTransferModels\DocKick.DataTransferModels.csproj", "{6D0CED2C-6210-4350-87AA-1272ABFB56C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Mapper", "DocKick.Mapper\DocKick.Mapper.csproj", "{7FDFC22E-7180-4209-9AB8-C4E5AFFC14E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Entities", "DocKick.Entities\DocKick.Entities.csproj", "{1A208228-B40C-48D7-ABC0-2FC876C3871A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,13 @@ Global
 		{6D0CED2C-6210-4350-87AA-1272ABFB56C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D0CED2C-6210-4350-87AA-1272ABFB56C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D0CED2C-6210-4350-87AA-1272ABFB56C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FDFC22E-7180-4209-9AB8-C4E5AFFC14E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FDFC22E-7180-4209-9AB8-C4E5AFFC14E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FDFC22E-7180-4209-9AB8-C4E5AFFC14E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FDFC22E-7180-4209-9AB8-C4E5AFFC14E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A208228-B40C-48D7-ABC0-2FC876C3871A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A208228-B40C-48D7-ABC0-2FC876C3871A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A208228-B40C-48D7-ABC0-2FC876C3871A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A208228-B40C-48D7-ABC0-2FC876C3871A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -7,5 +7,6 @@ namespace DocKick.Services
     {
         Task<AuthenticatedUserResult> Authenticate(string token);
         Task<AuthenticatedUserResult> Authenticate(InternalUserAuthModel model);
+        Task<UserProfileModel> GetProfile(string email);
     }
 }

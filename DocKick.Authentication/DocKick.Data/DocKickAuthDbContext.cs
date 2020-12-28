@@ -1,5 +1,5 @@
 ﻿using System;
-using DocKick.Data.Entities.Users;
+using DocKick.Entities.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

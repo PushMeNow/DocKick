@@ -31,5 +31,12 @@ namespace DocKick.Authentication.Controllers
         {
             return await _accountService.Authenticate(model);
         }
+
+        [Authorize]
+        [HttpPost("profile")]
+        public async Task<UserProfileModel> Profile()
+        {
+            return await _accountService.GetProfile(User.Identity.Name);
+        }
     }
 }

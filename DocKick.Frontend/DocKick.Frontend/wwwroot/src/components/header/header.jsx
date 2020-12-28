@@ -33,8 +33,8 @@ class Header extends Component {
     }
 }
 
-export default connect((state) => {
+export default connect(({auth}) => {
     return {
-        auth: state.authReducer
+        auth
     }
 })(Header);

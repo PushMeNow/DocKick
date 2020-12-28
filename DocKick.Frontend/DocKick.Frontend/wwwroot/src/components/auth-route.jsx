@@ -13,8 +13,8 @@ const AuthRoute = props => {
     return <Route { ...props } />;
 };
 
-export default connect(state => {
+export default connect(({ auth }) => {
     return {
-        isAuthenticated: state.authReducer.isAuthenticated
+        isAuthenticated: auth.isAuthenticated
     };
 })(AuthRoute);

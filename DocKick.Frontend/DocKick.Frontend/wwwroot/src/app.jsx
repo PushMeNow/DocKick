@@ -5,6 +5,7 @@ import PrivateRoute from "./components/private-route";
 import PrivateLayout from "./layouts/router-layouts/private-layout";
 import PublicLayout from "./layouts/router-layouts/public-layout";
 import { Container } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 const App = React.memo(() => (
     <>

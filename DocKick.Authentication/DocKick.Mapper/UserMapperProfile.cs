@@ -9,6 +9,7 @@ namespace DocKick.Mapper
         public UserMapperProfile()
         {
             CreateMap<User, UserProfileModel>()
+                .ForMember(q => q.UserId, q => q.MapFrom(w => w.Id))
                 .ForMember(q => q.Phone, q => q.MapFrom(w => w.PhoneNumber));
         }
     }

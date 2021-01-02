@@ -5,6 +5,6 @@ namespace DocKick.DataTransferModels.User
     public class AuthenticatedUserResult
     {
         public string Email { get; set; }
-        public JwtSecurityToken Token { get; set; }
+        public string Token { get; set; }
     }
 }

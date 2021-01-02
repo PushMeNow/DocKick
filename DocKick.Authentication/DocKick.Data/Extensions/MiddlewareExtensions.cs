@@ -12,13 +12,25 @@ namespace DocKick.Data.Extensions
             services.AddDbContext<DocKickAuthDbContext>(options =>
                                                         {
                                                             options.UseSqlServer(connString,
-                                                                              builder =>
-                                                                              {
-                                                                                  builder.MigrationsAssembly(typeof(DocKickAuthDbContext).Namespace);
-                                                                              });
+                                                                                 builder =>
+                                                                                 {
+                                                                                     builder.MigrationsAssembly(typeof(DocKickAuthDbContext).Namespace);
+                                                                                 });
                                                         });
 
-            services.AddIdentity<User, Role>()
+            services.AddIdentityCore<User>(q =>
+                                           {
+                                               q.Password = new PasswordOptions
+                                                            {
+                                                                RequireDigit = false,
+                                                                RequiredLength = 4,
+                                                                RequireLowercase = false,
+                                                                RequireUppercase = false,
+                                                                RequiredUniqueChars = 0,
+                                                                RequireNonAlphanumeric = false
+                                                            };
+                                           })
+                    .AddRoles<Role>()
                     .AddEntityFrameworkStores<DocKickAuthDbContext>()
                     .AddDefaultTokenProviders();
 

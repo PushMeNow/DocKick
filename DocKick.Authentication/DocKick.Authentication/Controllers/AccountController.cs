@@ -1,13 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using DocKick.Authentication.Extensions;
 using DocKick.DataTransferModels.User;
 using DocKick.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocKick.Authentication.Controllers
 {
     [Route("[controller]")]
-    public class AccountController : Controller
+    public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
 
@@ -32,11 +36,19 @@ namespace DocKick.Authentication.Controllers
             return await _accountService.Authenticate(model);
         }
 
+        [AllowAnonymous]
+        [HttpPost("sign-up")]
+        public async Task<AuthenticatedUserResult> SignUp([FromBody] SignUpModel model)
+        {
+            var user = User;
+            return await _accountService.SignUp(model);
+        }
+
         [Authorize]
         [HttpPost("profile")]
         public async Task<UserProfileModel> Profile()
         {
-            return await _accountService.GetProfile(User.Identity.Name);
+            return await _accountService.GetProfile(User.GetUserId());
         }
     }
 }

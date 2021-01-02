@@ -18,11 +18,28 @@ namespace DocKick.Exceptions
             }
         }
         
-        public static void ThrowIfNull(object value, string paramName)
+        public static void ThrowIfNotNull<TException>(object value)
+            where TException : Exception, new()
+        {
+            if (value is not null)
+            {
+                throw new TException();
+            }
+        }
+        
+        public static void ThrowArgumentNullIfNull(object value, string paramName)
         {
             if (value is null)
             {
                 throw new ArgumentNullException(paramName);
+            }
+        }
+        
+        public static void ThrowParameterNullIfNull(object value, string message)
+        {
+            if (value is null)
+            {
+                throw new ParameterNullException(message);
             }
         }
 
@@ -35,11 +52,19 @@ namespace DocKick.Exceptions
             }
         }
 
-        public static void ThrowNotFoundIfNull(object value, string objName)
+        public static void ThrowNotFoundIfNull(object value, string objName, string message = "{0} wasn't found.")
         {
             if (value is null)
             {
-                throw new ObjectNotFoundException(objName);
+                throw new ObjectNotFoundException(string.Format(message, objName));
+            }
+        }
+
+        public static void ThrowParamInvalidIfNotNull(object value, string message)
+        {
+            if (value is not null)
+            {
+                throw new ParameterInvalidException(message);
             }
         }
     }

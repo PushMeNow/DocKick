@@ -29,6 +29,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DocKick.Entities\DocKick.Entities.csproj" />
+      <ProjectReference Include="..\DocKick.Exceptions\DocKick.Exceptions.csproj" />
     </ItemGroup>
 
 </Project>

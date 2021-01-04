@@ -2,9 +2,10 @@
 
 namespace DocKick.DataTransferModels.User
 {
-    public class AuthenticatedUserResult
+    public record AuthenticatedUserResult
     {
         public string Email { get; set; }
-        public string Token { get; set; }
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
     }
 }

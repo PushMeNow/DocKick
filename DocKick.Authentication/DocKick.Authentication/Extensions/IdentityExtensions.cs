@@ -10,11 +10,11 @@ namespace DocKick.Authentication.Extensions
     {
         public static Guid GetUserId(this ClaimsPrincipal principal)
         {
-            var userIdClaim = principal.Claims.First(q => q.Type == ClaimNames.UserId);
+            var userIdClaim = principal.FindFirstValue(ClaimNames.UserId);
 
             ExceptionHelper.ThrowArgumentNullIfNull(userIdClaim, nameof(userIdClaim));
 
-            return Guid.Parse(userIdClaim.Value);
+            return Guid.Parse(userIdClaim);
         }
     }
 }

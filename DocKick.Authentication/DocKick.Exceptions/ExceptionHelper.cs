@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DocKick.Exceptions
 {
@@ -65,6 +66,14 @@ namespace DocKick.Exceptions
             if (value is not null)
             {
                 throw new ParameterInvalidException(message);
+            }
+        }
+
+        public static void ThrowTokenExceptionIfTrue(bool condition, string message)
+        {
+            if (condition)
+            {
+                throw new SecurityTokenException(message);
             }
         }
     }

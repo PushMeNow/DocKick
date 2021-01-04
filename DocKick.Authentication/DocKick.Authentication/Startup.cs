@@ -1,18 +1,14 @@
-using System;
 using System.Reflection;
-using System.Security.Claims;
-using System.Text;
 using AutoMapper;
 using DocKick.Authentication.Extensions;
 using DocKick.Data.Extensions;
+using DocKick.Services.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 
 namespace DocKick.Authentication
 {
@@ -62,6 +58,11 @@ namespace DocKick.Authentication
         {
             services.AddControllers();
 
+            var authSettings = Configuration.GetSection("Authentication")
+                                            .Get<AuthSettings>();
+
+            services.AddSingleton(authSettings);
+
             services.AddAuthentication(config =>
                                        {
                                            config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -70,57 +71,15 @@ namespace DocKick.Authentication
                                        })
                     .AddJwtBearer(config =>
                                   {
-                                      config.RequireHttpsMetadata = false;
-                                      config.SaveToken = true;
+                                      var defaultConfig = authSettings.Options.Value;
 
-                                      config.TokenValidationParameters = new TokenValidationParameters
-                                                                         {
-                                                                             ValidateIssuerSigningKey = false,
-                                                                             IssuerSigningKey =
-                                                                                 new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration
-                                                                                                              ["Authentication:TokenSecret"])),
-                                                                             ValidateIssuer = false,
-                                                                             ValidateAudience = false,
-                                                                             NameClaimType = ClaimTypes.Email
-                                                                         };
+                                      config.RequireHttpsMetadata = defaultConfig.RequireHttpsMetadata;
+                                      config.SaveToken = defaultConfig.SaveToken;
+
+                                      config.TokenValidationParameters = defaultConfig.TokenValidationParameters;
                                   });
 
-            services.AddSwaggerGen(c =>
-                                   {
-                                       c.SwaggerDoc("v1",
-                                                    new OpenApiInfo
-                                                    {
-                                                        Title = "DocKick.Authentication",
-                                                        Version = "v1"
-                                                    });
-
-                                       c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,
-                                                               new OpenApiSecurityScheme
-                                                               {
-                                                                   In = ParameterLocation.Header,
-                                                                   BearerFormat = "JWT",
-                                                                   Description = "Enter jwt.",
-                                                                   Scheme = JwtBearerDefaults.AuthenticationScheme,
-                                                                   Type = SecuritySchemeType.Http,
-                                                                   Name = "Authorization"
-                                                               });
-
-                                       c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                                                                {
-                                                                    {
-                                                                        new OpenApiSecurityScheme
-                                                                        {
-                                                                            Reference = new OpenApiReference
-                                                                                        {
-                                                                                            Type = ReferenceType.SecurityScheme,
-                                                                                            Id = JwtBearerDefaults.AuthenticationScheme
-                                                                                        }
-                                                                        },
-                                                                        Array.Empty<string>()
-                                                                    }
-                                                                });
-                                   });
-
+            services.AddSwaggerConfigs();
             services.AddDatabaseConfigs(Configuration.GetConnectionString("DocKickAuthentication"));
             services.AddDependencies(Configuration);
             services.AddAutoMapper(Assembly.Load("DocKick.Mapper"));

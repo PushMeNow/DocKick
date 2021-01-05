@@ -1,5 +1,9 @@
+using System.Reflection;
+using AutoMapper;
 using DocKick.Categorizable.Extensions;
+using DocKick.Categorizable.Settings;
 using DocKick.Data.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -38,11 +42,26 @@ namespace DocKick.Categorizable
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var authSettings = Configuration.GetSection("Authentication")
+                                            .Get<AuthSettings>();
+
+            services.AddSingleton(authSettings);
+
             services.AddControllers();
 
             services.AddSwaggerConfigs();
 
             services.AddDatabaseConfig(Configuration.GetConnectionString("DocKickCategorizable"));
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddOpenIdConnect(config =>
+                                      {
+                                          config.Configuration.AuthorizationEndpoint = authSettings.AuthEndpoint;
+                                          config.Configuration.TokenEndpoint = authSettings.TokenEndpoint;
+                                          config.SaveTokens = true;
+                                      });
+
+            services.AddAutoMapper(Assembly.Load("DocKick.Mapper"));
         }
     }
 }

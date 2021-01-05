@@ -1,4 +1,6 @@
-﻿using DocKick.Entities.Category;
+﻿using System.Reflection;
+using DocKick.Data.Configurations;
+using DocKick.Entities.Category;
 using Microsoft.EntityFrameworkCore;
 
 namespace DocKick.Data
@@ -8,5 +10,12 @@ namespace DocKick.Data
         public CategorizableDbContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Category> Categories { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("DocKick.Data"));
+        }
     }
 }

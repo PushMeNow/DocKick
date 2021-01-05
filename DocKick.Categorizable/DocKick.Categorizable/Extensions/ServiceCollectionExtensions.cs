@@ -1,4 +1,6 @@
 ﻿using System;
+using DocKick.Data.Repositories;
+using DocKick.Entities.Category;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +12,7 @@ namespace DocKick.Categorizable.Extensions
     {
         public static IServiceCollection AddDependencies(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<IRepository<Category>, CategoryRepository>();
 
             return services;
         }

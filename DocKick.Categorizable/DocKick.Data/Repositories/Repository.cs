@@ -26,7 +26,8 @@ namespace DocKick.Data.Repositories
             return Set.AsNoTracking();
         }
 
-        public async Task<TEntity> GetById(int id)
+        public async Task<TEntity> GetById<T>(T id)
+            where T : struct
         {
             return await Set.FindAsync(id);
         }
@@ -45,7 +46,7 @@ namespace DocKick.Data.Repositories
             Set.Update(entity);
         }
 
-        public async Task Delete(int id)
+        public async Task Delete<T>(T id) where T : struct
         {
             var entity = await GetById(id);
 

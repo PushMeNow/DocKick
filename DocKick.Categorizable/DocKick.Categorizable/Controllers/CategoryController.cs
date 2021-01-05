@@ -2,6 +2,8 @@
 
 namespace DocKick.Categorizable.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class CategoryController : ControllerBase
     {
         

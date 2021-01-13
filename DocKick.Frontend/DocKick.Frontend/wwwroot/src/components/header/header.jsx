@@ -1,40 +1,33 @@
-﻿import { Navbar, Nav, NavLink } from "react-bootstrap";
-import React from "react";
-import { Component } from "react";
-import DocKickGoogleLogout from "../auth/google/doc-kick-google-logout";
-import { connect } from "react-redux";
+﻿import { Navbar, Nav } from "react-bootstrap";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/auth-context";
+import { LogoutButton } from "../auth/logout-button";
+import { LoginButton } from "../auth/login-button";
 
-class Header extends Component {
-    render() {
-        let button;
+const Header = () => {
+    const { isAuthenticated } = useContext(AuthContext);
 
-        if (!this.props.auth.isAuthenticated) {
-            button = <Link to="/login">Login</Link>;
-        } else {
-            button = <DocKickGoogleLogout />;
-        }
-
-        return (
-            <Navbar bg="light"
-                    expand="lg">
-                <Navbar.Brand>
-                    <Link className="navbar-brand"
-                          to="/">Doc Kick</Link>
-                </Navbar.Brand>
-                <Nav className="mr-auto">
-                    <Link to="/" className="nav-link">Home</Link>
-                </Nav>
-                <Nav>
-                    { button }
-                </Nav>
-            </Navbar>
-        )
-    }
+    let button = !isAuthenticated()
+        ? <LoginButton />
+        : <LogoutButton />;
+    
+    return (
+        <Navbar bg="light"
+                expand="lg">
+            <Navbar.Brand>
+                <Link className="navbar-brand"
+                      to="/">Doc Kick</Link>
+            </Navbar.Brand>
+            <Nav className="mr-auto">
+                <Link to="/"
+                      className="nav-link">Home</Link>
+            </Nav>
+            <Nav>
+                { button }
+            </Nav>
+        </Navbar>
+    )
 }
 
-export default connect(({auth}) => {
-    return {
-        auth
-    }
-})(Header);
+export default Header;

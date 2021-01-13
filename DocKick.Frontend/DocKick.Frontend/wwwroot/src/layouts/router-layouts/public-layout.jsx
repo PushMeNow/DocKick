@@ -1,15 +1,15 @@
 ﻿import React from 'react';
-import { Switch } from 'react-router-dom';
-import LoginPage from "../../pages/login/login-page";
-import AuthRoute from "../../components/auth-route";
+import { Route, Switch } from 'react-router-dom';
+import { LoginCallback } from "../../components/auth/login-callback";
+import { LogoutCallback } from "../../components/auth/logout-callback";
 
 const PublicLayout = () => {
     return (
         <Switch>
-            <AuthRoute path="/login"
-                       type="guestOnly"
-                       exact
-                       component={ LoginPage } />
+            <Route path="/login-callback"
+                   component={ LoginCallback } />
+            <Route path="/logout-callback"
+                   component={ LogoutCallback } />
         </Switch>
     )
 }

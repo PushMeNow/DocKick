@@ -81,7 +81,9 @@ namespace DocKick.Services
                                          string subjectId,
                                          string displayName)
         {
-            var context = await _interaction.GetLogoutContextAsync(await _interaction.CreateLogoutContextAsync());
+            var context = await _interaction.GetLogoutContextAsync(string.IsNullOrEmpty(logoutId)
+                                                                       ? await _interaction.CreateLogoutContextAsync()
+                                                                       : logoutId);
 
             ExceptionHelper.ThrowParameterNullIfNull(context, "Incorrect logout request.");
 

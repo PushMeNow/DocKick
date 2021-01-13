@@ -16,8 +16,11 @@ namespace DocKick.Services.Settings
         public string TokenSecret { get; set; }
         public int AccessTokenLifeTime { get; set; }
         public int RefreshTokenLifeTime { get; set; }
+        public string Authority { get; set; }
 
         public Lazy<JwtBearerOptions> Options { get; }
+
+        public ApiSettings[] Apis { get; set; }
 
         private Lazy<JwtBearerOptions> GetJwtBearerOptions()
         {
@@ -25,6 +28,7 @@ namespace DocKick.Services.Settings
                              {
                                  RequireHttpsMetadata = false,
                                  SaveToken = true,
+                                 Authority = Authority,
                                  TokenValidationParameters = new TokenValidationParameters
                                                              {
                                                                  ValidateIssuerSigningKey = false,

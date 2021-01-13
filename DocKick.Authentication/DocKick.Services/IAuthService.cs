@@ -8,10 +8,11 @@ namespace DocKick.Services
     {
         Task<AuthenticatedUserResult> Authenticate(string token);
 
-        Task<AuthenticatedUserResult> Authenticate(InternalUserAuthModel model);
+        Task<bool> Authenticate(InternalUserAuthModel model);
 
         Task<AuthenticatedUserResult> SignUp(SignUpModel model);
 
         Task<AuthenticatedUserResult> RefreshToken(RefreshTokenModel model);
+        Task<string> Logout(string logoutId, string subjectId, string displayName);
     }
 }

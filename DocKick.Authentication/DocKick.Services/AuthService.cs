@@ -1,21 +1,36 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using DocKick.DataTransferModels.User;
 using DocKick.Entities.Users;
 using DocKick.Exceptions;
 using Google.Apis.Auth;
+using IdentityServer4.Events;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 
 namespace DocKick.Services
 {
     public class AuthService : IAuthService
     {
+        private readonly IEventService _events;
+
+        private readonly IIdentityServerInteractionService _interaction;
+
+        private readonly SignInManager<User> _signInManager;
         private readonly ITokenService _tokenService;
         private readonly UserManager<User> _userManager;
 
-        public AuthService(UserManager<User> userManager, ITokenService tokenService)
+        public AuthService(UserManager<User> userManager,
+                           SignInManager<User> signInManager,
+                           ITokenService tokenService,
+                           IIdentityServerInteractionService interaction,
+                           IEventService events)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _tokenService = tokenService;
+            _interaction = interaction;
+            _events = events;
         }
 
         public async Task<AuthenticatedUserResult> Authenticate(string token)
@@ -41,7 +56,7 @@ namespace DocKick.Services
             return await GetAuthenticatedUserResultAndAddRefreshToken(user, true);
         }
 
-        public async Task<AuthenticatedUserResult> Authenticate(InternalUserAuthModel model)
+        public async Task<bool> Authenticate(InternalUserAuthModel model)
         {
             ExceptionHelper.ThrowArgumentNullIfNull(model, nameof(model));
 
@@ -49,11 +64,32 @@ namespace DocKick.Services
 
             ExceptionHelper.ThrowIfNull<AuthenticationException>(user);
 
-            var result = await _userManager.CheckPasswordAsync(user, model.Password);
+            var result = await _signInManager.PasswordSignInAsync(user,
+                                                                  model.Password,
+                                                                  false,
+                                                                  false);
 
-            ExceptionHelper.ThrowIfTrue<AuthenticationException>(!result);
+            ExceptionHelper.ThrowIfTrue<AuthenticationException>(!result.Succeeded);
 
-            return await GetAuthenticatedUserResultAndAddRefreshToken(user, true);
+            // return await GetAuthenticatedUserResultAndAddRefreshToken(user, true);
+            await _events.RaiseAsync(new UserLoginSuccessEvent(user.Email, user.Id.ToString(), user.Email));
+
+            return true;
+        }
+
+        public async Task<string> Logout(string logoutId,
+                                         string subjectId,
+                                         string displayName)
+        {
+            var context = await _interaction.GetLogoutContextAsync(await _interaction.CreateLogoutContextAsync());
+
+            ExceptionHelper.ThrowParameterNullIfNull(context, "Incorrect logout request.");
+
+            await _signInManager.SignOutAsync();
+
+            await _events.RaiseAsync(new UserLogoutSuccessEvent(subjectId, displayName));
+
+            return context.PostLogoutRedirectUri;
         }
 
         public async Task<AuthenticatedUserResult> SignUp(SignUpModel model)
@@ -73,6 +109,8 @@ namespace DocKick.Services
             var createResult = await _userManager.CreateAsync(user, model.Password);
 
             ExceptionHelper.ThrowIfTrue<AuthenticationException>(!createResult.Succeeded);
+
+            await _userManager.AddClaimAsync(user, new Claim("email", user.Email));
 
             return await GetAuthenticatedUserResultAndAddRefreshToken(user);
         }

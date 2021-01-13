@@ -14,11 +14,11 @@ namespace DocKick.Data.Extensions
                                                             options.UseSqlServer(connString,
                                                                                  builder =>
                                                                                  {
-                                                                                     builder.MigrationsAssembly(typeof(DocKickAuthDbContext).Namespace);
+                                                                                     builder.MigrationsAssembly(typeof(DocKickAuthDbContext).Assembly.GetName().Name);
                                                                                  });
                                                         });
 
-            services.AddIdentityCore<User>(q =>
+            services.AddIdentity<User, Role>(q =>
                                            {
                                                q.Password = new PasswordOptions
                                                             {
@@ -30,9 +30,8 @@ namespace DocKick.Data.Extensions
                                                                 RequireNonAlphanumeric = false
                                                             };
                                            })
-                    .AddRoles<Role>()
-                    .AddEntityFrameworkStores<DocKickAuthDbContext>()
-                    .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<DocKickAuthDbContext>()
+            .AddDefaultTokenProviders();
 
             return services;
         }

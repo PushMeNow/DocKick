@@ -1,9 +1,10 @@
 using System.Reflection;
 using AutoMapper;
 using DocKick.Authentication.Extensions;
+using DocKick.Authentication.Settings;
 using DocKick.Data.Extensions;
+using DocKick.Entities.Users;
 using DocKick.Services.Settings;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -14,12 +15,12 @@ namespace DocKick.Authentication
 {
     public class Startup
     {
-        private IConfiguration Configuration { get; }
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
+
+        private IConfiguration Configuration { get; }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -45,7 +46,7 @@ namespace DocKick.Authentication
 
             app.UseRouting();
 
-            app.UseAuthentication();
+            app.UseIdentityServer();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -56,31 +57,49 @@ namespace DocKick.Authentication
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllersWithViews();
 
             var authSettings = Configuration.GetSection("Authentication")
                                             .Get<AuthSettings>();
 
             services.AddSingleton(authSettings);
+            services.AddDatabaseConfigs(Configuration.GetConnectionString("DocKickAuthentication"));
 
-            services.AddAuthentication(config =>
+            services.AddIdentityServer(options =>
                                        {
-                                           config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                                           config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                                           config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                                           options.Events.RaiseErrorEvents = true;
+                                           // options.Events.RaiseFailureEvents = true;
+                                           options.Events.RaiseInformationEvents = true;
+                                           options.Events.RaiseSuccessEvents = true;
+                                           options.UserInteraction.LoginUrl = $"{authSettings.Authority}/auth/login";
+                                           options.UserInteraction.LogoutUrl = $"{authSettings.Authority}/auth/logout";
+                                           options.IssuerUri = authSettings.Authority;
                                        })
-                    .AddJwtBearer(config =>
-                                  {
-                                      var defaultConfig = authSettings.Options.Value;
+                    .AddDeveloperSigningCredential()
+                    .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
+                    .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
+                    .AddInMemoryClients(IdentityServerConfig.GetClients())
+                    .AddAspNetIdentity<User>();
 
-                                      config.RequireHttpsMetadata = defaultConfig.RequireHttpsMetadata;
-                                      config.SaveToken = defaultConfig.SaveToken;
+            services.AddAuthentication();
+            services.AddAuthorization();
 
-                                      config.TokenValidationParameters = defaultConfig.TokenValidationParameters;
-                                  });
+            // services.AddAuthentication(config =>
+            //                            {
+            //                                config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            //                                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //                                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //                            })
+            //         .AddJwtBearer(config =>
+            //                       {
+            //                           var defaultConfig = authSettings.Options.Value;
+            //
+            //                           config.RequireHttpsMetadata = defaultConfig.RequireHttpsMetadata;
+            //                           config.SaveToken = defaultConfig.SaveToken;
+            //                           config.Audience = "api1";
+            //                       });
 
             services.AddSwaggerConfigs();
-            services.AddDatabaseConfigs(Configuration.GetConnectionString("DocKickAuthentication"));
             services.AddDependencies(Configuration);
             services.AddAutoMapper(Assembly.Load("DocKick.Mapper"));
         }

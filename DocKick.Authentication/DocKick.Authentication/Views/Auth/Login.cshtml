@@ -1,0 +1,16 @@
+﻿@model DocKick.DataTransferModels.User.InternalUserAuthModel
+
+<div class="row">
+    <form class="col-6" asp-action="Login" method="post">
+        <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl">
+        <div>
+            <label asp-for="Email"></label>
+            <input type="text" asp-for="Email">
+        </div>
+        <div>
+            <label asp-for="Password"></label>
+            <input type="text" class="form-control" asp-for="Password">
+        </div>
+        <button type="submit">Login</button>
+    </form>
+</div>

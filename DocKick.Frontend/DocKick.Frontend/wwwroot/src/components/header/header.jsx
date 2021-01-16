@@ -11,7 +11,7 @@ const Header = () => {
     let button = !isAuthenticated()
         ? <LoginButton />
         : <LogoutButton />;
-    
+
     return (
         <Navbar bg="light"
                 expand="lg">
@@ -22,6 +22,8 @@ const Header = () => {
             <Nav className="mr-auto">
                 <Link to="/"
                       className="nav-link">Home</Link>
+                <Link to="/profile"
+                      className="nav-link">Profile</Link>
             </Nav>
             <Nav>
                 { button }

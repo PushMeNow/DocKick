@@ -102,7 +102,7 @@ export default class AuthService {
             this.clearTokenInfo();
             window.location.replace(process.env.REACT_APP_PUBLIC_URL);
         });
-        
+
         this.UserManager.clearStaleState();
     };
 
@@ -116,5 +116,15 @@ export default class AuthService {
 
     getOidcStorageKey = () => {
         return `oidc.user:${ process.env.REACT_APP_AUTH_SERVER }:${ process.env.REACT_APP_IDENTITY_CLIENT_ID }`;
+    }
+
+    getAuthorizationHeader = () => {
+        const oidcStorage = this.getOidcStorage();
+
+        if (!oidcStorage) {
+            return null;
+        }
+
+        return `${ oidcStorage.token_type } ${ oidcStorage.id_token }`;
     }
 }

@@ -12,12 +12,12 @@ export const identityServerConfig = {
     // the URL of our identity server
     authority: process.env.REACT_APP_AUTH_SERVER,
     // this ID maps to the client ID in the identity client configuration
-    client_id: "client",
+    client_id: process.env.REACT_APP_IDENTITY_CLIENT_ID,
     // URL to redirect to after login
     redirect_uri: `${ process.env.REACT_APP_PUBLIC_URL }/login-callback`,
     response_type: "id_token token",
     // the scopes or resources we would like access to
-    scope: "openid profile",
+    scope: "openid profile offline_access api1",
     // URL to redirect to after logout
     post_logout_redirect_uri: `${ process.env.REACT_APP_PUBLIC_URL }/logout-callback`,
 }

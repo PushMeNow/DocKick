@@ -1,0 +1,1 @@
+﻿export const combineIdentityServerUrl = (virtualUrl) => `${process.env.REACT_APP_AUTH_SERVER}/${virtualUrl}`;

@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
-using DocKick.Authentication.Extensions;
 using DocKick.DataTransferModels.User;
 using DocKick.Services;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocKick.Authentication.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
     [Route("[controller]")]
     public class AccountController : ControllerBase
     {
@@ -18,10 +18,10 @@ namespace DocKick.Authentication.Controllers
             _accountService = accountService;
         }
 
-        [HttpPost("profile")]
+        [HttpGet("profile")]
         public async Task<UserProfileModel> Profile()
         {
-            return await _accountService.GetProfile(User.GetUserId());
+            return await _accountService.GetProfile(User.Identity.Name);
         }
     }
 }

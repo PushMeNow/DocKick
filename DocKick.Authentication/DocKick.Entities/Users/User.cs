@@ -6,6 +6,5 @@ namespace DocKick.Entities.Users
 {
     public class User : IdentityUser<Guid>
     {
-        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }

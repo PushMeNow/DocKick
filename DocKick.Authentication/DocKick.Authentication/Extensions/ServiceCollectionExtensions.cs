@@ -1,9 +1,11 @@
 ﻿using System;
-using DocKick.Data.Repositories;
+using DocKick.Authentication.Settings;
 using DocKick.Entities.Users;
 using DocKick.Services;
 using DocKick.Services.Settings;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -14,8 +16,6 @@ namespace DocKick.Authentication.Extensions
     {
         public static IServiceCollection AddDependencies(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-            
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, TokenService>();
@@ -62,6 +62,38 @@ namespace DocKick.Authentication.Extensions
                                    });
 
             return services;
+        }
+
+        public static void AddIdentityServerConfig(this IServiceCollection services, AuthSettings authSettings)
+        {
+            services.AddIdentityServer(options =>
+                                       {
+                                           options.Events.RaiseErrorEvents = true;
+                                           // options.Events.RaiseFailureEvents = true;
+                                           options.Events.RaiseInformationEvents = true;
+                                           options.Events.RaiseSuccessEvents = true;
+                                           options.UserInteraction.LoginUrl = $"{authSettings.Authority}/auth/login";
+                                           options.UserInteraction.LogoutUrl = $"{authSettings.Authority}/auth/logout";
+                                           options.IssuerUri = authSettings.Authority;
+                                       })
+                    .AddDeveloperSigningCredential()
+                    .AddJwtBearerClientAuthentication()
+                    .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
+                    .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
+                    .AddInMemoryApiScopes(IdentityServerConfig.GetScopes())
+                    .AddInMemoryClients(authSettings.Clients)
+                    .AddAspNetIdentity<User>();
+
+            services.AddAuthentication()
+                    .AddIdentityServerAuthentication(options =>
+                                                     {
+                                                         options.Authority = authSettings.Authority;
+                                                         options.SaveToken = true;
+                                                         options.SupportedTokens = SupportedTokens.Both;
+                                                         options.RequireHttpsMetadata = false;
+                                                     });
+
+            services.AddAuthorization();
         }
     }
 }

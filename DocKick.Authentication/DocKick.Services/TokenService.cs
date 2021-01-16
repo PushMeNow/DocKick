@@ -16,12 +16,10 @@ namespace DocKick.Services
     public class TokenService : ITokenService
     {
         private readonly AuthSettings _authSettings;
-        private readonly IRefreshTokenRepository _repository;
 
-        public TokenService(AuthSettings authSettings, IRefreshTokenRepository repository)
+        public TokenService(AuthSettings authSettings)
         {
             _authSettings = authSettings;
-            _repository = repository;
         }
 
         public Task<string> GenerateAccessToken(User user)
@@ -64,55 +62,55 @@ namespace DocKick.Services
 
         public async Task CreateRefreshToken(User user, string refreshToken)
         {
-            var entity = new RefreshToken
-                         {
-                             Token = refreshToken,
-                             UserId = user.Id
-                         };
-
-            entity.UpdateExpiration(_authSettings.RefreshTokenLifeTime);
-
-            await _repository.Create(entity);
-            await _repository.Save();
+            // var entity = new RefreshToken
+            //              {
+            //                  Token = refreshToken,
+            //                  UserId = user.Id
+            //              };
+            //
+            // entity.UpdateExpiration(_authSettings.RefreshTokenLifeTime);
+            //
+            // await _repository.Create(entity);
+            // await _repository.Save();
         }
 
         public async Task UpdateRefreshToken(User user, string refreshToken)
         {
-            var entity = await _repository.GetByToken(refreshToken);
-
-            ExceptionHelper.ThrowNotFoundIfNull(entity, "Refresh token");
-
-            entity.UpdateExpiration(_authSettings.RefreshTokenLifeTime);
-
-            _repository.Update(entity);
-
-            await _repository.Save();
+            // var entity = await _repository.GetByToken(refreshToken);
+            //
+            // ExceptionHelper.ThrowNotFoundIfNull(entity, "Refresh token");
+            //
+            // entity.UpdateExpiration(_authSettings.RefreshTokenLifeTime);
+            //
+            // _repository.Update(entity);
+            //
+            // await _repository.Save();
         }
 
         public async Task DeleteRefreshToken(string refreshToken)
         {
-            await _repository.DeleteByToken(refreshToken);
-            await _repository.Save();
+            // await _repository.DeleteByToken(refreshToken);
+            // await _repository.Save();
         }
 
         public async Task ClearUserRefreshTokens(User user)
         {
-            ExceptionHelper.ThrowArgumentNullIfNull(user,nameof(user));
-
-            await _repository.ClearUserRefreshTokens(user.Id);
-            await _repository.Save();
+            // ExceptionHelper.ThrowArgumentNullIfNull(user,nameof(user));
+            //
+            // await _repository.ClearUserRefreshTokens(user.Id);
+            // await _repository.Save();
         }
 
         public async Task<bool> ValidateRefreshToken(User user, string refreshToken)
         {
-            ExceptionHelper.ThrowArgumentNullIfNull(user, nameof(user));
-            ExceptionHelper.ThrowArgumentNullIfNull(refreshToken, nameof(refreshToken));
-
-            var entity = await _repository.GetByToken(refreshToken);
-
-            ExceptionHelper.ThrowNotFoundIfNull(entity, "Refresh token");
-
-            return DateTime.UtcNow < entity.Expiration;
+            // ExceptionHelper.ThrowArgumentNullIfNull(user, nameof(user));
+            // ExceptionHelper.ThrowArgumentNullIfNull(refreshToken, nameof(refreshToken));
+            //
+            // var entity = await _repository.GetByToken(refreshToken);
+            //
+            // ExceptionHelper.ThrowNotFoundIfNull(entity, "Refresh token");
+            //
+            return false;
         }
 
         public Task<Guid> GetUserIdFromAccessToken(string accessToken)

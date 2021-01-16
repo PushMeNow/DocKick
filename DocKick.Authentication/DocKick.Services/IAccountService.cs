@@ -6,6 +6,6 @@ namespace DocKick.Services
 {
     public interface IAccountService
     {
-        Task<UserProfileModel> GetProfile(Guid userId);
+        Task<UserProfileModel> GetProfile(string email);
     }
 }

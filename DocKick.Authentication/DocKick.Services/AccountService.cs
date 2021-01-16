@@ -19,9 +19,9 @@ namespace DocKick.Services
             _mapper = mapper;
         }
 
-        public async Task<UserProfileModel> GetProfile(Guid userId)
+        public async Task<UserProfileModel> GetProfile(string email)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var user = await _userManager.FindByEmailAsync(email);
 
             ExceptionHelper.ThrowNotFoundIfNull(user, "User");
 

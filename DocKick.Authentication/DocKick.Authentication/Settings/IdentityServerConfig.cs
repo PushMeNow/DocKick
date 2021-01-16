@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using DocKick.Services.Settings;
 using IdentityServer4;
 using IdentityServer4.Models;
 
@@ -13,8 +15,7 @@ namespace DocKick.Authentication.Settings
             return new List<IdentityResource>
                    {
                        new IdentityResources.OpenId(),
-                       new IdentityResources.Profile(),
-                       new IdentityResources.Email()
+                       new IdentityResources.Profile()
                    };
         }
 
@@ -22,36 +23,44 @@ namespace DocKick.Authentication.Settings
         {
             return new List<ApiResource>
                    {
+                       new(ApiScopeName, "My API", Array.Empty<string>())
+                   };
+        }
+
+        public static IEnumerable<ApiScope> GetScopes()
+        {
+            return new ApiScope[]
+                   {
                        new(ApiScopeName, "My API")
                    };
         }
 
-        public static IEnumerable<Client> GetClients()
+        public static Client[] GetClients(AuthSettings authSettings)
         {
-            return new List<Client>
+            return new Client[]
                    {
                        new()
                        {
-                           ClientId = "client",
-                           // ClientName = "DocKick",
-                           ClientUri = "https://localhost:5001",
+                           ClientId = "doc-kick-frontend",
+                           ClientUri = authSettings.Authority,
                            RequireClientSecret = false,
                            AccessTokenLifetime = 3600,
                            IdentityTokenLifetime = 3600,
                            AllowedGrantTypes = GrantTypes.Implicit,
                            AllowAccessTokensViaBrowser = true,
                            AlwaysIncludeUserClaimsInIdToken = true,
+                           AccessTokenType = AccessTokenType.Jwt,
                            PostLogoutRedirectUris = new[]
                                                     {
-                                                        "https://localhost:5001/logout-callback"
+                                                        $"{authSettings.Authority}/logout-callback"
                                                     },
                            RedirectUris = new[]
                                           {
-                                              "https://localhost:5001/login-callback"
+                                              $"{authSettings.Authority}/login-callback"
                                           },
                            AllowedCorsOrigins = new[]
                                                 {
-                                                    "https://localhost:5001"
+                                                    authSettings.Authority
                                                 },
                            // scopes that client has access to
                            AllowedScopes =
@@ -60,7 +69,7 @@ namespace DocKick.Authentication.Settings
                                IdentityServerConstants.StandardScopes.Profile,
                                ApiScopeName
                            },
-                           AllowOfflineAccess = false,
+                           AllowOfflineAccess = true,
                            RequireConsent = false
                        }
                    };

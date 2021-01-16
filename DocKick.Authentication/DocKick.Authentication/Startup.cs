@@ -1,9 +1,7 @@
 using System.Reflection;
 using AutoMapper;
 using DocKick.Authentication.Extensions;
-using DocKick.Authentication.Settings;
 using DocKick.Data.Extensions;
-using DocKick.Entities.Users;
 using DocKick.Services.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,8 +44,8 @@ namespace DocKick.Authentication
 
             app.UseRouting();
 
-            app.UseIdentityServer();
             app.UseAuthorization();
+            app.UseIdentityServer();
 
             app.UseEndpoints(endpoints =>
                              {
@@ -65,39 +63,7 @@ namespace DocKick.Authentication
             services.AddSingleton(authSettings);
             services.AddDatabaseConfigs(Configuration.GetConnectionString("DocKickAuthentication"));
 
-            services.AddIdentityServer(options =>
-                                       {
-                                           options.Events.RaiseErrorEvents = true;
-                                           // options.Events.RaiseFailureEvents = true;
-                                           options.Events.RaiseInformationEvents = true;
-                                           options.Events.RaiseSuccessEvents = true;
-                                           options.UserInteraction.LoginUrl = $"{authSettings.Authority}/auth/login";
-                                           options.UserInteraction.LogoutUrl = $"{authSettings.Authority}/auth/logout";
-                                           options.IssuerUri = authSettings.Authority;
-                                       })
-                    .AddDeveloperSigningCredential()
-                    .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
-                    .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
-                    .AddInMemoryClients(IdentityServerConfig.GetClients())
-                    .AddAspNetIdentity<User>();
-
-            services.AddAuthentication();
-            services.AddAuthorization();
-
-            // services.AddAuthentication(config =>
-            //                            {
-            //                                config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            //                                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //                                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //                            })
-            //         .AddJwtBearer(config =>
-            //                       {
-            //                           var defaultConfig = authSettings.Options.Value;
-            //
-            //                           config.RequireHttpsMetadata = defaultConfig.RequireHttpsMetadata;
-            //                           config.SaveToken = defaultConfig.SaveToken;
-            //                           config.Audience = "api1";
-            //                       });
+            services.AddIdentityServerConfig(authSettings);
 
             services.AddSwaggerConfigs();
             services.AddDependencies(Configuration);

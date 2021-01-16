@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Security.Claims;
 using System.Text;
+using IdentityServer4.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -18,6 +18,8 @@ namespace DocKick.Services.Settings
         public int RefreshTokenLifeTime { get; set; }
         public string Authority { get; set; }
 
+        public Client[] Clients { get; set; }
+
         public Lazy<JwtBearerOptions> Options { get; }
 
         public ApiSettings[] Apis { get; set; }
@@ -34,8 +36,7 @@ namespace DocKick.Services.Settings
                                                                  ValidateIssuerSigningKey = false,
                                                                  IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(TokenSecret)),
                                                                  ValidateIssuer = false,
-                                                                 ValidateAudience = false,
-                                                                 NameClaimType = ClaimTypes.Email
+                                                                 ValidateAudience = false
                                                              }
                              });
         }

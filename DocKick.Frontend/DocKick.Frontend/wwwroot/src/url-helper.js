@@ -1,1 +1,2 @@
 ﻿export const combineIdentityServerUrl = (virtualUrl) => `${process.env.REACT_APP_AUTH_SERVER}/${virtualUrl}`;
+export const combineCategorizableUrl = (virtualUrl) => `${process.env.REACT_APP_CATEGORIZABLE}/${virtualUrl}`;

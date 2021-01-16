@@ -71,7 +71,6 @@ namespace DocKick.Services
 
             ExceptionHelper.ThrowIfTrue<AuthenticationException>(!result.Succeeded);
 
-            // return await GetAuthenticatedUserResultAndAddRefreshToken(user, true);
             await _events.RaiseAsync(new UserLoginSuccessEvent(user.Email, user.Id.ToString(), user.Email));
 
             return true;

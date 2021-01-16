@@ -1,13 +1,17 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@ViewData["Title"]</title>
-    <link href="css/bootstrap.min.css">
+    <link href="@Url.Content("~/css/bootstrap.min.css")" type="text/css" rel="stylesheet">
 </head>
 <body>
 
-@RenderBody()
+<div class="container mt-2">
+    @RenderBody()
+</div>
 
+<script src="@Url.Content("~/js/bootstrap.bundle.min.js")"></script>
 </body>
-<script src="js/bootstrap.bundle.min.js"></script>
 </html>

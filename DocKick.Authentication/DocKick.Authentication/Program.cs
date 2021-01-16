@@ -18,6 +18,7 @@ namespace DocKick.Authentication
                        .ConfigureWebHostDefaults(webBuilder =>
                                                  {
                                                      webBuilder.UseStartup<Startup>();
+                                                     webBuilder.UseWebRoot("wwwroot");
                                                  });
         }
     }

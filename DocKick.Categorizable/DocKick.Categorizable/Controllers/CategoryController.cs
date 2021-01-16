@@ -6,6 +6,10 @@ namespace DocKick.Categorizable.Controllers
     [Route("[controller]")]
     public class CategoryController : ControllerBase
     {
-        
+        [HttpGet("api")]
+        public string CheckApi()
+        {
+            return "Done";
+        }
     }
 }

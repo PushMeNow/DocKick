@@ -3,6 +3,7 @@ using AutoMapper;
 using DocKick.Categorizable.Extensions;
 using DocKick.Categorizable.Settings;
 using DocKick.Data.Extensions;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,14 +30,25 @@ namespace DocKick.Categorizable
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DocKick.Categorizable v1"));
             }
+            
+            app.UseCors(config =>
+                        {
+                            config.AllowAnyHeader()
+                                  .AllowAnyMethod()
+                                  .AllowAnyOrigin();
+                        });
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
                              {
-                                 endpoints.MapControllers();
+                                 endpoints.MapControllers()
+                                          .RequireAuthorization();
                              });
         }
 
@@ -53,12 +65,34 @@ namespace DocKick.Categorizable
 
             services.AddDatabaseConfig(Configuration.GetConnectionString("DocKickCategorizable"));
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddOpenIdConnect(config =>
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                    .AddIdentityServerAuthentication(options =>
+                                                     {
+                                                         options.Authority = authSettings.Authority;
+                                                         options.SaveToken = true;
+                                                     });
+            // .AddOpenIdConnect(JwtBearerDefaults.AuthenticationScheme,
+            //                   config =>
+            //                   {
+            //                       config.Authority = authSettings.Authority;
+            //                       config.ClientId = "categorizable";
+            //                       config.ClientSecret = "secret";
+            //                       config.ResponseType = "code";
+            //
+            //                       config.SaveTokens = true;
+            //
+            //                       config.Scope.Add("api1");
+            //                       config.Scope.Add("offline_access");
+            //                   });
+
+            services.AddAuthorization(options =>
                                       {
-                                          config.Configuration.AuthorizationEndpoint = authSettings.AuthEndpoint;
-                                          config.Configuration.TokenEndpoint = authSettings.TokenEndpoint;
-                                          config.SaveTokens = true;
+                                          options.AddPolicy("ApiScope",
+                                                            policy =>
+                                                            {
+                                                                policy.RequireAuthenticatedUser();
+                                                                policy.RequireClaim("scope", "api1");
+                                                            });
                                       });
 
             services.AddAutoMapper(Assembly.Load("DocKick.Mapper"));

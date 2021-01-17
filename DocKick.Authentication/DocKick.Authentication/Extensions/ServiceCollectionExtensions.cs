@@ -18,7 +18,6 @@ namespace DocKick.Authentication.Extensions
         {
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<ITokenService, TokenService>();
 
             return services;
         }

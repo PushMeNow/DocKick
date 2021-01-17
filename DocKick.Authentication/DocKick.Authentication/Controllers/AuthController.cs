@@ -20,20 +20,6 @@ namespace DocKick.Authentication.Controllers
             _authService = authService;
         }
 
-        [HttpPost("google-login")]
-        public async Task<AuthenticatedUserResult> GoogleLogin([FromBody] UserAuthModel model)
-        {
-            var result = await _authService.Authenticate(model.TokenId);
-
-            return result;
-        }
-
-        [HttpPost("refresh-token")]
-        public async Task<AuthenticatedUserResult> RefreshToken(RefreshTokenModel model)
-        {
-            return await _authService.RefreshToken(model);
-        }
-
         [HttpPost("sign-up")]
         public async Task<AuthenticatedUserResult> SignUp([FromBody] SignUpModel model)
         {

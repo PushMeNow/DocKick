@@ -1,15 +1,12 @@
 ﻿using System.Threading.Tasks;
 using DocKick.DataTransferModels.User;
 using DocKick.Services;
-using IdentityServer4.AccessTokenValidation;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocKick.Authentication.Controllers
 {
-    [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
     [Route("[controller]")]
-    public class AccountController : ControllerBase
+    public class AccountController : AuthenticatedController
     {
         private readonly IAccountService _accountService;
 

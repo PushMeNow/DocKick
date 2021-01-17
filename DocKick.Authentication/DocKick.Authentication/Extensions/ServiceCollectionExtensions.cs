@@ -3,6 +3,7 @@ using DocKick.Authentication.Settings;
 using DocKick.Entities.Users;
 using DocKick.Services;
 using DocKick.Services.Settings;
+using IdentityServer4;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -90,7 +91,14 @@ namespace DocKick.Authentication.Extensions
                                                          options.SaveToken = true;
                                                          options.SupportedTokens = SupportedTokens.Both;
                                                          options.RequireHttpsMetadata = false;
-                                                     });
+                                                     })
+                    .AddGoogle(options =>
+                               {
+                                   options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                                   
+                                   options.ClientId = "734351612309-0bl0o4vlsmfooue95ellut0fc833scmt.apps.googleusercontent.com";
+                                   options.ClientSecret = "R0p2vUf9g8B5J7Ic-026U6YH";
+                               });
 
             services.AddAuthorization();
         }

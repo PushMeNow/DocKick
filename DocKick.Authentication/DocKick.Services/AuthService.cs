@@ -2,8 +2,10 @@
 using DocKick.DataTransferModels.User;
 using DocKick.Entities.Users;
 using DocKick.Exceptions;
+using DocKick.Extensions;
 using IdentityServer4.Events;
 using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace DocKick.Services
@@ -11,7 +13,6 @@ namespace DocKick.Services
     public class AuthService : IAuthService
     {
         private readonly IEventService _events;
-
         private readonly IIdentityServerInteractionService _interaction;
 
         private readonly SignInManager<User> _signInManager;
@@ -28,7 +29,7 @@ namespace DocKick.Services
             _events = events;
         }
 
-        public async Task<bool> Authenticate(InternalUserAuthModel model)
+        public async Task<bool> Login(InternalUserAuthModel model)
         {
             ExceptionHelper.ThrowArgumentNullIfNull(model, nameof(model));
 
@@ -65,6 +66,68 @@ namespace DocKick.Services
             return context.PostLogoutRedirectUri;
         }
 
+        public AuthenticationProperties PrepareAuthProperties(string provider,
+                                                              string returnUrl,
+                                                              string redirectUrl)
+        {
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            properties.Items["returnUrl"] = returnUrl;
+
+            return properties;
+        }
+
+        public async Task<string> ExternalLogin()
+        {
+            var info = await _signInManager.GetExternalLoginInfoIdentityServer();
+
+            ExceptionHelper.ThrowParameterNullIfNull(info, "External login error.");
+
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
+            var returnUrl = info.AuthenticationProperties.Items["returnUrl"] ?? "~/";
+
+            if (result.Succeeded)
+            {
+                await _events.RaiseAsync(await GetSuccessEvent(info));
+
+                return returnUrl;
+            }
+
+            var email = info.Principal.GetEmail();
+
+            ExceptionHelper.ThrowParameterNullIfNull(email, "Incorrect email.");
+
+            var user = await _userManager.FindByNameAsync(email);
+
+            if (user is null)
+            {
+                user = new User
+                       {
+                           Email = email,
+                           UserName = email
+                       };
+
+                const string defaultPass = "12345";
+
+                var identResult = await _userManager.CreateAsync(user, defaultPass);
+
+                ExceptionHelper.ThrowIfTrue<AuthenticationException>(!identResult.Succeeded);
+
+                await _signInManager.SignInAsync(user, false);
+            }
+            else
+            {
+                var identResult = await _userManager.AddLoginAsync(user, info);
+
+                ExceptionHelper.ThrowIfTrue<AuthenticationException>(!identResult.Succeeded);
+
+                await _signInManager.SignInAsync(user, false);
+            }
+
+            await _events.RaiseAsync(await GetSuccessEvent(info));
+
+            return returnUrl;
+        }
+
         public async Task<AuthenticatedUserResult> SignUp(SignUpModel model)
         {
             // ExceptionHelper.ThrowArgumentNullIfNull(model, nameof(model));
@@ -87,6 +150,18 @@ namespace DocKick.Services
             //
             // return await GetAuthenticatedUserResultAndAddRefreshToken(user);
             return null;
+        }
+
+        private async Task<UserLoginSuccessEvent> GetSuccessEvent(ExternalLoginInfo info)
+        {
+            var email = info.Principal.GetEmail();
+            var user = await _userManager.FindByEmailAsync(email);
+
+            ExceptionHelper.ThrowNotFoundIfNull(user, nameof(user));
+
+            return new UserLoginSuccessEvent(user.Email,
+                                             user.Id.ToString(),
+                                             user.Email);
         }
     }
 }

@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Login";
 }
+
+
 <div class="row justify-content-center">
     <form class="col-6" asp-action="Login" method="post">
         <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl">
@@ -17,4 +19,20 @@
             <button type="submit" class="btn btn-primary">Login</button>
         </div>
     </form>
+    @if (ViewBag.ExternalProviders != null)
+    {
+        var externalProviders = ViewBag.ExternalProviders as IEnumerable<string>;
+        <div class="col-6">
+            @foreach (var provider in externalProviders)
+            {
+                <a class="btn btn-secondary"
+                   asp-controller="Auth"
+                   asp-action="ExternalLogin"
+                   asp-route-provider="@provider"
+                   asp-route-returnUrl="@Model.ReturnUrl">
+                    @provider
+                </a>
+            }
+        </div>
+    }
 </div>

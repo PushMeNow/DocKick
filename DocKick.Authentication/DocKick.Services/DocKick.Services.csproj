@@ -18,6 +18,7 @@
       <ProjectReference Include="..\DocKick.DataTransferModels\DocKick.DataTransferModels.csproj" />
       <ProjectReference Include="..\DocKick.Data\DocKick.Data.csproj" />
       <ProjectReference Include="..\DocKick.Exceptions\DocKick.Exceptions.csproj" />
+      <ProjectReference Include="..\DocKick.Extensions\DocKick.Extensions.csproj" />
     </ItemGroup>
 
     <ItemGroup>

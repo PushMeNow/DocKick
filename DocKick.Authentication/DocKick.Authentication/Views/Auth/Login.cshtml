@@ -18,21 +18,26 @@
         <div class="mb-2">
             <button type="submit" class="btn btn-primary">Login</button>
         </div>
+        @if (ViewBag.ExternalProviders != null)
+        {
+            <hr/>
+
+            var externalProviders = ViewBag.ExternalProviders as IEnumerable<string>;
+            <div class="flex-row d-flex flex-wrap justify-content-start">
+                @foreach (var provider in externalProviders)
+                {
+                    <div>
+                        <a class="btn btn-secondary"
+                           asp-controller="Auth"
+                           asp-action="ExternalLogin"
+                           asp-route-provider="@provider"
+                           asp-route-returnUrl="@Model.ReturnUrl">
+                            @provider
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+
     </form>
-    @if (ViewBag.ExternalProviders != null)
-    {
-        var externalProviders = ViewBag.ExternalProviders as IEnumerable<string>;
-        <div class="col-6">
-            @foreach (var provider in externalProviders)
-            {
-                <a class="btn btn-secondary"
-                   asp-controller="Auth"
-                   asp-action="ExternalLogin"
-                   asp-route-provider="@provider"
-                   asp-route-returnUrl="@Model.ReturnUrl">
-                    @provider
-                </a>
-            }
-        </div>
-    }
 </div>

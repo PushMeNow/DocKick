@@ -4,14 +4,16 @@ using DocKick.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DocKick.Data.Migrations
 {
     [DbContext(typeof(DocKickAuthDbContext))]
-    partial class DocKickAuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210119211310_AddStrictsForUserProps")]
+    partial class AddStrictsForUserProps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

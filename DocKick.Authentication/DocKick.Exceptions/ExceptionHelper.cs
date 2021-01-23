@@ -53,7 +53,15 @@ namespace DocKick.Exceptions
             }
         }
 
-        public static void ThrowNotFoundIfNull(object value, string objName, string message = "{0} wasn't found.")
+        public static void ThrowParameterInvalidIfTrue(bool condition, string message)
+        {
+            if (condition)
+            {
+                throw new ParameterInvalidException(message);
+            }
+        }
+
+        public static void ThrowNotFoundIfNull<T>(T value, string objName, string message = "{0} wasn't found.")
         {
             if (value is null)
             {
@@ -66,14 +74,6 @@ namespace DocKick.Exceptions
             if (value is not null)
             {
                 throw new ParameterInvalidException(message);
-            }
-        }
-
-        public static void ThrowTokenExceptionIfTrue(bool condition, string message)
-        {
-            if (condition)
-            {
-                throw new SecurityTokenException(message);
             }
         }
     }

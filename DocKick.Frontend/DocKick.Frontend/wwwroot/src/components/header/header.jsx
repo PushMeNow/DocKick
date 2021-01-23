@@ -22,8 +22,9 @@ const Header = () => {
             <Nav className="mr-auto">
                 <Link to="/"
                       className="nav-link">Home</Link>
-                <Link to="/profile"
-                      className="nav-link">Profile</Link>
+                { isAuthenticated() && <Link to="/profile"
+                                             className="nav-link">Profile</Link>
+                }
             </Nav>
             <Nav>
                 { button }

@@ -45,8 +45,9 @@ namespace DocKick.Authentication
                                   .AllowAnyMethod()
                                   .AllowAnyOrigin();
                         });
-
+#if DEBUG || RELEASE
             app.UseHttpsRedirection();
+#endif
 
             app.UseDefaultFiles();
             app.UseStaticFiles();

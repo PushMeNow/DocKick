@@ -20,6 +20,8 @@ namespace DocKick.Services.Settings
 
         public Client[] Clients { get; set; }
 
+        public string MetadataAddress { get; set; }
+
         public Lazy<JwtBearerOptions> Options { get; }
 
         public ApiSettings[] Apis { get; set; }

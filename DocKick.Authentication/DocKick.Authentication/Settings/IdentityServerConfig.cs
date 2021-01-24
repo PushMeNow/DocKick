@@ -34,45 +34,5 @@ namespace DocKick.Authentication.Settings
                        new(ApiScopeName, "My API")
                    };
         }
-
-        public static Client[] GetClients(AuthSettings authSettings)
-        {
-            return new Client[]
-                   {
-                       new()
-                       {
-                           ClientId = "doc-kick-frontend",
-                           ClientUri = authSettings.Authority,
-                           RequireClientSecret = false,
-                           AccessTokenLifetime = 3600,
-                           IdentityTokenLifetime = 3600,
-                           AllowedGrantTypes = GrantTypes.Implicit,
-                           AllowAccessTokensViaBrowser = true,
-                           AlwaysIncludeUserClaimsInIdToken = true,
-                           AccessTokenType = AccessTokenType.Jwt,
-                           PostLogoutRedirectUris = new[]
-                                                    {
-                                                        $"{authSettings.Authority}/logout-callback"
-                                                    },
-                           RedirectUris = new[]
-                                          {
-                                              $"{authSettings.Authority}/login-callback"
-                                          },
-                           AllowedCorsOrigins = new[]
-                                                {
-                                                    authSettings.Authority
-                                                },
-                           // scopes that client has access to
-                           AllowedScopes =
-                           {
-                               IdentityServerConstants.StandardScopes.OpenId,
-                               IdentityServerConstants.StandardScopes.Profile,
-                               ApiScopeName
-                           },
-                           AllowOfflineAccess = true,
-                           RequireConsent = false
-                       }
-                   };
-        }
     }
 }

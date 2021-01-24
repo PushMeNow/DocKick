@@ -3,6 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <LangVersion>default</LangVersion>
+        <Configurations>Debug;Release;Docker</Configurations>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
     
     <ItemGroup>
@@ -33,6 +35,10 @@
       <ProjectReference Include="..\DocKick.Data\DocKick.Data.csproj" />
       <ProjectReference Include="..\DocKick.Mapper\DocKick.Mapper.csproj" />
       <ProjectReference Include="..\DocKick.Services\DocKick.Services.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="nginx.info" />
     </ItemGroup>
 
 </Project>

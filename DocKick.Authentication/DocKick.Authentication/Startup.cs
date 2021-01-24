@@ -5,6 +5,7 @@ using DocKick.Data.Extensions;
 using DocKick.Services.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,6 +34,11 @@ namespace DocKick.Authentication
                                  });
             }
 
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+                                    {
+                                        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                                    });
+
             app.UseCors(config =>
                         {
                             config.AllowAnyHeader()
@@ -44,8 +50,9 @@ namespace DocKick.Authentication
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            
+
             app.UseRouting();
+            app.UseCookiePolicy();
 
             app.UseAuthorization();
             app.UseIdentityServer();
@@ -74,6 +81,8 @@ namespace DocKick.Authentication
 
             services.AddRazorPages()
                     .AddRazorRuntimeCompilation();
+
+            services.ConfigureNonBreakingSameSiteCookies();
         }
     }
 }

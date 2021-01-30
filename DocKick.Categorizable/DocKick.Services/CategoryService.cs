@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using DocKick.Data.Repositories;
 using DocKick.Dtos.Categories;
 using DocKick.Entities.Category;
@@ -25,11 +26,10 @@ namespace DocKick.Services
         public async Task<IReadOnlyCollection<CategoryModel>> GetCategoriesByUserId(Guid userId)
         {
             var categories = _repository.GetAll()
-                                        .Where(q => q.UserId == userId);
+                                        .Where(q => q.UserId == userId)
+                                        .ProjectTo<CategoryModel>(_mapper.ConfigurationProvider);
 
-            var mapped = _mapper.ProjectTo<CategoryModel>(categories);
-
-            return await mapped.ToArrayAsync();
+            return await categories.ToArrayAsync();
         }
 
         public async Task<CategoryModel> GetCategory(Guid categoryId)

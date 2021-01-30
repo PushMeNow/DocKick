@@ -1,6 +1,6 @@
-﻿namespace DocKick.DataTransferModels.User
+﻿namespace DocKick.DataTransferModels.Users
 {
-    public class UserProfileRequest
+    public record UserProfileRequest
     {
         public string Phone { get; set; }
         public string FirstName { get; set; }

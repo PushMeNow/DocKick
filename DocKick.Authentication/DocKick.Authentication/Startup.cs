@@ -3,6 +3,7 @@ using AutoMapper;
 using DocKick.Authentication.Extensions;
 using DocKick.Data.Extensions;
 using DocKick.Services.Settings;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -66,7 +67,11 @@ namespace DocKick.Authentication
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                    .AddFluentValidation(options =>
+                                         {
+                                             options.RegisterValidatorsFromAssembly(Assembly.Load("DocKick.Validation"));
+                                         });
 
             var authSettings = Configuration.GetSection("Authentication")
                                             .Get<AuthSettings>();

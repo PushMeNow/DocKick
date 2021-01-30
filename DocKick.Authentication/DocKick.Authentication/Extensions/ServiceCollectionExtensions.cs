@@ -113,13 +113,6 @@ namespace DocKick.Authentication.Extensions
                                                                                              };
                                                      },
                                                      null)
-                    // .AddIdentityServerAuthentication(options =>
-                    //                                  {
-                    //                                      options.Authority = authSettings.Authority;
-                    //                                      options.SaveToken = true;
-                    //                                      options.SupportedTokens = SupportedTokens.Both;
-                    //                                      options.RequireHttpsMetadata = false;
-                    //                                  })
                     .AddGoogle(options =>
                                {
                                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;

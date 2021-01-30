@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace DocKick.DataTransferModels.User
+namespace DocKick.DataTransferModels.Users
 {
-    public class UserProfileModel : UserProfileRequest
+    public record UserProfileModel : UserProfileRequest
     {
         public Guid UserId { get; set; }
         public string Email { get; set; }

@@ -71,19 +71,6 @@ namespace DocKick.Categorizable
                                                          options.Authority = authSettings.Authority;
                                                          options.SaveToken = true;
                                                      });
-            // .AddOpenIdConnect(JwtBearerDefaults.AuthenticationScheme,
-            //                   config =>
-            //                   {
-            //                       config.Authority = authSettings.Authority;
-            //                       config.ClientId = "categorizable";
-            //                       config.ClientSecret = "secret";
-            //                       config.ResponseType = "code";
-            //
-            //                       config.SaveTokens = true;
-            //
-            //                       config.Scope.Add("api1");
-            //                       config.Scope.Add("offline_access");
-            //                   });
 
             services.AddAuthorization(options =>
                                       {

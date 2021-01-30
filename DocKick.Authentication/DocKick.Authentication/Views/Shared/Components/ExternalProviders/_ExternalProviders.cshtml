@@ -1,0 +1,21 @@
+﻿@model string[]
+
+@if (Model != null && Model.Any())
+{
+    <hr/>
+
+    <div class="flex-row d-flex flex-wrap justify-content-start">
+        @foreach (var provider in Model)
+        {
+            <div>
+                <a class="btn btn-secondary"
+                   asp-controller="Auth"
+                   asp-action="ExternalLogin"
+                   asp-route-provider="@provider"
+                   asp-route-returnUrl="@ViewBag.ReturnUrl">
+                    @provider
+                </a>
+            </div>
+        }
+    </div>
+}

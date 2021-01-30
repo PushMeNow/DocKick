@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using DocKick.DataTransferModels.User;
+using DocKick.DataTransferModels.Users;
 
 namespace DocKick.Services
 {

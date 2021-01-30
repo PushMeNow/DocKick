@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using DocKick.DataTransferModels.User;
+using DocKick.DataTransferModels.Users;
 using DocKick.Entities.Users;
 using DocKick.Services;
 using IdentityServer4.Extensions;
@@ -22,21 +22,47 @@ namespace DocKick.Authentication.Controllers
             _signInManager = signInManager;
         }
 
-        [HttpPost("sign-up")]
-        public async Task<AuthenticatedUserResult> SignUp([FromBody] SignUpModel model)
+        [HttpGet("sign-up")]
+        public IActionResult SignUp([FromQuery] string returnUrl)
         {
-            return await _authService.SignUp(model);
+            if (returnUrl.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+
+            var model = new SignUpModel()
+                        {
+                            ReturnUrl = returnUrl
+                        };
+
+            return View(model);
+        }
+
+        [HttpPost("sign-up")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignUp([FromForm] SignUpModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var successful = await _authService.SignUp(model);
+
+            return successful
+                ? Redirect(model.ReturnUrl)
+                : View(model);
         }
 
         [HttpGet("login")]
-        public async Task<IActionResult> Login(string returnUrl)
+        public async Task<IActionResult> Login([FromQuery] string returnUrl)
         {
             if (string.IsNullOrEmpty(returnUrl))
             {
                 return BadRequest();
             }
 
-            var model = new InternalUserAuthModel
+            var model = new SingInModel
                         {
                             ReturnUrl = returnUrl
                         };
@@ -47,7 +73,8 @@ namespace DocKick.Authentication.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromForm] InternalUserAuthModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login([FromForm] SingInModel model)
         {
             if (!ModelState.IsValid)
             {

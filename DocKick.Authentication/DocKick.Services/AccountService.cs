@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AutoMapper;
-using DocKick.DataTransferModels.User;
+using DocKick.DataTransferModels.Users;
 using DocKick.Entities.Users;
 using DocKick.Exceptions;
 using DocKick.Extensions;

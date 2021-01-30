@@ -9,7 +9,7 @@ namespace DocKick.Categorizable.Controllers
         [HttpGet("api")]
         public string CheckApi()
         {
-            return "Done";
+            return User.Identity.Name;
         }
     }
 }

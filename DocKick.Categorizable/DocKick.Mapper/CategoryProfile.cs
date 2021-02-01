@@ -11,6 +11,9 @@ namespace DocKick.Mapper
             CreateMap<Category, CategoryModel>()
                 .ReverseMap()
                 .ForMember(q => q.CategoryId, q => q.Ignore());
+            CreateMap<Category, CategoryRequest>()
+                .ReverseMap()
+                .ForMember(q => q.CategoryId, q => q.Ignore());
         }
     }
 }

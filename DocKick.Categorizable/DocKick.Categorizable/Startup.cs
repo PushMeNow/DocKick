@@ -1,10 +1,11 @@
 using System.Reflection;
 using AutoMapper;
+using Azure.Storage.Blobs;
 using DocKick.Categorizable.Extensions;
 using DocKick.Categorizable.Settings;
 using DocKick.Data.Extensions;
+using DocKick.Services.Categories;
 using IdentityServer4.AccessTokenValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -15,12 +16,12 @@ namespace DocKick.Categorizable
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
+
+        public IConfiguration Configuration { get; }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -30,7 +31,7 @@ namespace DocKick.Categorizable
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DocKick.Categorizable v1"));
             }
-            
+
             app.UseCors(config =>
                         {
                             config.AllowAnyHeader()
@@ -83,6 +84,9 @@ namespace DocKick.Categorizable
                                       });
 
             services.AddAutoMapper(Assembly.Load("DocKick.Mapper"));
+
+            services.AddScoped(_ => new BlobServiceClient(Configuration.GetConnectionString("AzureBlobStorage")));
+            services.AddScoped<ICategoryService, CategoryService>();
         }
     }
 }

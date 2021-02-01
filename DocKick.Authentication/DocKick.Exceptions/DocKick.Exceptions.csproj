@@ -11,4 +11,8 @@
       <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.8.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\DocKick.Categorizable\DocKick.Helpers\DocKick.Helpers.csproj" />
+    </ItemGroup>
+
 </Project>

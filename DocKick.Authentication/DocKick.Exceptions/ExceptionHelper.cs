@@ -1,44 +1,40 @@
 ﻿using System;
+using DocKick.Helpers.Extensions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DocKick.Exceptions
 {
     public static class ExceptionHelper
     {
-        public static void ThrowExternalAuthentication()
-        {
-            throw new ExternalAuthenticationException();
-        }
-
-        public static void ThrowIfNull<TException>(object value)
+        public static void ThrowIfEmpty<TException>(object value)
             where TException : Exception, new()
         {
-            if (value is null)
+            if (value.IsEmpty())
             {
                 throw new TException();
             }
         }
         
-        public static void ThrowIfNotNull<TException>(object value)
+        public static void ThrowIfNotEmpty<TException>(object value)
             where TException : Exception, new()
         {
-            if (value is not null)
+            if (!value.IsEmpty())
             {
                 throw new TException();
             }
         }
         
-        public static void ThrowArgumentNullIfNull(object value, string paramName)
+        public static void ThrowArgumentNullIfEmpty(object value, string paramName)
         {
-            if (value is null)
+            if (value.IsEmpty())
             {
                 throw new ArgumentNullException(paramName);
             }
         }
         
-        public static void ThrowParameterNullIfNull(object value, string message)
+        public static void ThrowParameterNullIfEmpty(object value, string message)
         {
-            if (value is null)
+            if (value.IsEmpty())
             {
                 throw new ParameterNullException(message);
             }
@@ -61,17 +57,17 @@ namespace DocKick.Exceptions
             }
         }
 
-        public static void ThrowNotFoundIfNull<T>(T value, string objName, string message = "{0} wasn't found.")
+        public static void ThrowNotFoundIfEmpty<T>(T value, string objName, string message = "{0} wasn't found.")
         {
-            if (value is null)
+            if (value.IsEmpty())
             {
                 throw new ObjectNotFoundException(string.Format(message, objName));
             }
         }
 
-        public static void ThrowParamInvalidIfNotNull(object value, string message)
+        public static void ThrowParamInvalidIfNotEmpty(object value, string message)
         {
-            if (value is not null)
+            if (!value.IsEmpty())
             {
                 throw new ParameterInvalidException(message);
             }

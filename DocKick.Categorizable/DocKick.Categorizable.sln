@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Dtos", "DocKick.Dto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Mapper", "DocKick.Mapper\DocKick.Mapper.csproj", "{26C1D8CF-2942-4CC6-8C76-3F317EA8ABB5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocKick.Helpers", "DocKick.Helpers\DocKick.Helpers.csproj", "{777A3BFE-A38C-43DB-A556-CF38F901B370}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{26C1D8CF-2942-4CC6-8C76-3F317EA8ABB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26C1D8CF-2942-4CC6-8C76-3F317EA8ABB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26C1D8CF-2942-4CC6-8C76-3F317EA8ABB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{777A3BFE-A38C-43DB-A556-CF38F901B370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{777A3BFE-A38C-43DB-A556-CF38F901B370}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{777A3BFE-A38C-43DB-A556-CF38F901B370}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{777A3BFE-A38C-43DB-A556-CF38F901B370}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

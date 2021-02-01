@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace DocKick.Dtos.Categories
+﻿namespace DocKick.Dtos.Categories
 {
-    public class CategoryRequest : CreateCategoryRequest
+    public class CategoryRequest
     {
-        public Guid CategoryId { get; set; }
+        public string Name { get; set; }
     }
 }

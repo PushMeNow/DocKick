@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer4;
 using Microsoft.AspNetCore.Authentication;
@@ -11,7 +10,8 @@ namespace DocKick.Extensions
     {
         private const string LoginProviderKey = "LoginProvider";
 
-        public static async Task<ExternalLoginInfo> GetExternalLoginInfoIdentityServer<TUser>(this SignInManager<TUser> signInManager) where TUser : class
+        public static async Task<ExternalLoginInfo> GetExternalLoginInfoIdentityServer<TUser>(this SignInManager<TUser> signInManager)
+            where TUser : class
         {
             var auth = await signInManager.Context.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
             var items = auth?.Properties?.Items;
@@ -23,7 +23,7 @@ namespace DocKick.Extensions
                 return null;
             }
 
-            var providerKey = auth.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            var providerKey = auth.Principal.GetNameIdentifier();
             var provider = items[LoginProviderKey];
 
             if (providerKey == null
@@ -34,14 +34,9 @@ namespace DocKick.Extensions
 
             var externalSchemes = await signInManager.GetExternalAuthenticationSchemesAsync();
 
-            var providerDisplayName = externalSchemes.FirstOrDefault(p => p.Name == provider)
-                                                     ?.DisplayName
-                                      ?? provider;
+            var providerDisplayName = externalSchemes.FirstOrDefault(p => p.Name == provider)?.DisplayName ?? provider;
 
-            return new ExternalLoginInfo(auth.Principal,
-                                         provider,
-                                         providerKey,
-                                         providerDisplayName)
+            return new ExternalLoginInfo(auth.Principal, provider, providerKey, providerDisplayName)
                    {
                        AuthenticationTokens = auth.Properties.GetTokens(),
                        AuthenticationProperties = auth.Properties

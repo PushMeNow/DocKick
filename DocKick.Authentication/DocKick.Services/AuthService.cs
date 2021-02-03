@@ -1,11 +1,8 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using DocKick.DataTransferModels.Users;
 using DocKick.Entities.Users;
 using DocKick.Exceptions;
 using DocKick.Extensions;
-using DocKick.Services.Constants;
 using IdentityServer4.Events;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -15,6 +12,8 @@ namespace DocKick.Services
 {
     public class AuthService : IAuthService
     {
+        private const string DefaultPass = "12345";
+        
         private readonly IEventService _events;
         private readonly IIdentityServerInteractionService _interaction;
 
@@ -34,11 +33,11 @@ namespace DocKick.Services
 
         public async Task<bool> Login(SingInModel model)
         {
-            ExceptionHelper.ThrowArgumentNullIfNull(model, nameof(model));
+            ExceptionHelper.ThrowArgumentNullIfEmpty(model, nameof(model));
 
             var user = await _userManager.FindByEmailAsync(model.Email);
 
-            return await InternalLogin(user, model.Password);
+            return await Login(user, model.Password);
         }
 
         public async Task<string> Logout(string logoutId, string subjectId, string displayName)
@@ -47,7 +46,7 @@ namespace DocKick.Services
                                                                        ? await _interaction.CreateLogoutContextAsync()
                                                                        : logoutId);
 
-            ExceptionHelper.ThrowParameterNullIfNull(context, "Incorrect logout request.");
+            ExceptionHelper.ThrowParameterNullIfEmpty(context, "Incorrect logout request.");
 
             await _signInManager.SignOutAsync();
 
@@ -79,9 +78,7 @@ namespace DocKick.Services
 
             if (user is null)
             {
-                const string defaultPass = "12345";
-
-                var createUserResult = await CreateUser(parseResult.Email, defaultPass);
+                var createUserResult = await CreateUser(parseResult.Email, DefaultPass);
 
                 ExceptionHelper.ThrowIfTrue<AuthenticationException>(!createUserResult.result.Succeeded);
 
@@ -94,27 +91,24 @@ namespace DocKick.Services
                 ExceptionHelper.ThrowIfTrue<AuthenticationException>(!identResult.Succeeded);
             }
 
-            await AddDefaultUserClaims(user);
-            await _signInManager.SignInAsync(user, false);
-
-            await _events.RaiseAsync(await GetSuccessEvent(parseResult.ExternalLoginInfo));
+            await Login(user);
 
             return parseResult.ReturnUrl;
         }
 
         public async Task<bool> SignUp(SignUpModel model)
         {
-            ExceptionHelper.ThrowArgumentNullIfNull(model, nameof(model));
+            ExceptionHelper.ThrowArgumentNullIfEmpty(model, nameof(model));
 
             var checkUser = await _userManager.FindByEmailAsync(model.Email);
 
-            ExceptionHelper.ThrowIfNotNull<AuthenticationException>(checkUser);
+            ExceptionHelper.ThrowIfNotEmpty<AuthenticationException>(checkUser);
 
             var (identResult, user) = await CreateUser(model.Email, model.Password);
 
             ExceptionHelper.ThrowIfTrue<AuthenticationException>(!identResult.Succeeded);
 
-            return await InternalLogin(user, model.Password);
+            return await Login(user, model.Password);
         }
 
         private async Task<UserLoginSuccessEvent> GetSuccessEvent(ExternalLoginInfo info)
@@ -122,7 +116,7 @@ namespace DocKick.Services
             var email = info.Principal.GetEmail();
             var user = await _userManager.FindByEmailAsync(email);
 
-            ExceptionHelper.ThrowNotFoundIfNull(user, nameof(user));
+            ExceptionHelper.ThrowNotFoundIfEmpty(user, nameof(user));
 
             return new UserLoginSuccessEvent(user.Email, user.Id.ToString(), user.Email);
         }
@@ -145,41 +139,33 @@ namespace DocKick.Services
             return (identResult, user);
         }
 
-        private async Task AddDefaultUserClaims(User user)
+        private async Task<bool> Login(User user, string password)
         {
-            var userClaims = await _userManager.GetClaimsAsync(user);
+            ExceptionHelper.ThrowIfNotEmpty<AuthenticationException>(user);
 
-            if (userClaims.Any(q => q.Type == ClaimNames.UserId))
-            {
-                return;
-            }
+            var checkResult = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+            
+            ExceptionHelper.ThrowIfTrue<AuthenticationException>(!checkResult.Succeeded);
 
-            var userIdClaim = new Claim(ClaimNames.UserId, user.Id.ToString());
-            var result = await _userManager.AddClaimAsync(user, userIdClaim);
-
-            ExceptionHelper.ThrowIfTrue<AuthenticationException>(!result.Succeeded);
-        }
-
-        private async Task<bool> InternalLogin(User user, string password)
-        {
-            ExceptionHelper.ThrowIfNull<AuthenticationException>(user);
-
-            await AddDefaultUserClaims(user);
-
-            var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
-
-            ExceptionHelper.ThrowIfTrue<AuthenticationException>(!result.Succeeded);
-
-            await _events.RaiseAsync(GetSuccessEvent(user));
+            await Login(user);
 
             return true;
+        }
+
+        private async Task Login(User user)
+        {
+            ExceptionHelper.ThrowIfNotEmpty<AuthenticationException>(user);
+
+            await _signInManager.SignInAsync(user, false);
+
+            await _events.RaiseAsync(GetSuccessEvent(user));
         }
 
         private async Task<ExternalResponseParseResult> ParseExternalResponse()
         {
             var info = await _signInManager.GetExternalLoginInfoIdentityServer();
 
-            ExceptionHelper.ThrowParameterNullIfNull(info, "External login error.");
+            ExceptionHelper.ThrowParameterNullIfEmpty(info, "External login error.");
 
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
             var returnUrl = info.AuthenticationProperties.Items["returnUrl"] ?? "~/";
@@ -188,7 +174,7 @@ namespace DocKick.Services
             {
                 return new ExternalResponseParseResult
                        {
-                           IsSignedIn = false,
+                           IsSignedIn = true,
                            ExternalLoginInfo = info,
                            Email = null,
                            ReturnUrl = returnUrl
@@ -197,7 +183,7 @@ namespace DocKick.Services
 
             var email = info.Principal.GetEmail();
 
-            ExceptionHelper.ThrowParameterNullIfNull(email, "Incorrect email.");
+            ExceptionHelper.ThrowParameterNullIfEmpty(email, "Incorrect email.");
 
             return new ExternalResponseParseResult
                    {

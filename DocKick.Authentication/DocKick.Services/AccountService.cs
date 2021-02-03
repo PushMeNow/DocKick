@@ -20,20 +20,20 @@ namespace DocKick.Services
             _mapper = mapper;
         }
 
-        public async Task<UserProfileModel> GetProfile(string email)
+        public async Task<UserProfileModel> GetProfile(Guid userId)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
 
-            ExceptionHelper.ThrowNotFoundIfNull(user, "User");
+            ExceptionHelper.ThrowNotFoundIfEmpty(user, "User");
 
             return _mapper.Map<UserProfileModel>(user);
         }
 
-        public async Task<UserProfileModel> UpdateProfile(string email, UserProfileRequest model)
+        public async Task<UserProfileModel> UpdateProfile(Guid userId, UserProfileRequest model)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
 
-            ExceptionHelper.ThrowNotFoundIfNull(user, "User");
+            ExceptionHelper.ThrowNotFoundIfEmpty(user, "User");
 
             var mappedUser = _mapper.Map(model, user);
 

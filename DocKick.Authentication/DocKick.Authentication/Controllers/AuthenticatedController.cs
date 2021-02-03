@@ -1,4 +1,6 @@
-﻿using IdentityServer4.AccessTokenValidation;
+﻿using System;
+using DocKick.Extensions;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +9,8 @@ namespace DocKick.Authentication.Controllers
     [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
     public abstract class AuthenticatedController : Controller
     {
-        protected string UserName => User.Identity.Name;
+        private Guid? _userId;
+        
+        protected Guid UserId => _userId ??= User.GetUserId();
     }
 }

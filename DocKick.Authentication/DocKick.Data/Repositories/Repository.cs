@@ -33,14 +33,14 @@ namespace DocKick.Data.Repositories
 
         public async Task Create(TEntity entity)
         {
-            ExceptionHelper.ThrowArgumentNullIfNull(entity, nameof(entity));
+            ExceptionHelper.ThrowArgumentNullIfEmpty(entity, nameof(entity));
 
             await Set.AddAsync(entity);
         }
 
         public void Update(TEntity entity)
         {
-            ExceptionHelper.ThrowArgumentNullIfNull(entity, nameof(entity));
+            ExceptionHelper.ThrowArgumentNullIfEmpty(entity, nameof(entity));
 
             Set.Update(entity);
         }
@@ -49,7 +49,7 @@ namespace DocKick.Data.Repositories
         {
             var entity = await GetById(id);
 
-            ExceptionHelper.ThrowArgumentNullIfNull(entity, nameof(entity));
+            ExceptionHelper.ThrowArgumentNullIfEmpty(entity, nameof(entity));
 
             Set.Remove(entity);
         }

@@ -5,7 +5,8 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DocKick.Data.Repositories;
 using DocKick.Dtos.Categories;
-using DocKick.Entities.Category;
+using DocKick.Entities.Categories;
+using DocKick.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace DocKick.Services.Categories
@@ -22,6 +23,21 @@ namespace DocKick.Services.Categories
                              .Where(q => q.UserId == userId)
                              .ProjectTo<CategoryModel>(Mapper.ConfigurationProvider)
                              .ToArrayAsync();
+        }
+
+        public async Task<CategoryModel> UpdateParent(Guid categoryId, Guid parentId)
+        {
+            ExceptionHelper.ThrowParameterInvalidIfTrue(categoryId == parentId, "Category and his parent cannot be same.");
+            
+            var category = await Repository.GetById(categoryId);
+            
+            ExceptionHelper.ThrowNotFoundIfEmpty(category, "Category");
+
+            category.ParentId = parentId;
+
+            await Repository.Save();
+
+            return Map<CategoryModel>(category);
         }
     }
 }

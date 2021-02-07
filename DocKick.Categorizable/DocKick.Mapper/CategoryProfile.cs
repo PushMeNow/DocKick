@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using DocKick.Dtos.Categories;
-using DocKick.Entities.Category;
+using DocKick.Entities.Categories;
 
 namespace DocKick.Mapper
 {

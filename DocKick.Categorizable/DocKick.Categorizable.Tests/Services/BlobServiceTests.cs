@@ -1,48 +1,41 @@
-﻿using System;
-using System.IO;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Azure.Storage.Blobs;
-using DocKick.Services.Blobs;
-using Microsoft.Extensions.Configuration;
+using DocKick.Categorizable.Tests.Services.Fixtures;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace DocKick.Categorizable.Tests.Services
 {
-    public class BlobServiceTests
+    public class BlobServiceTests : IClassFixture<BlobServiceFixture>
     {
-        private static readonly Guid _testBlobUserId = new("6f722fbe-cd44-4d27-b0ab-f1e54f6c1b96");
-        private const string TestBlobName = "9bfe1f0f-c430-480e-b4da-449afe756b29.jpg";
+        private readonly BlobServiceFixture _fixture;
+
+        public BlobServiceTests(BlobServiceFixture fixture)
+        {
+            _fixture = fixture;
+        }
 
         [Fact]
         public async Task Upload()
         {
-            await using var fileStream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "TestPictures/BlackCatWithFish.jpg"), FileMode.Open);
+            await using var fileStream = BlobServiceFixture.GetTestPicture();
 
-            var blobService = GetBlobService();
+            var blobService = _fixture.CreateService();
 
-            var response = await blobService.Upload(_testBlobUserId, fileStream);
-            
+            var response = await blobService.Upload(_fixture.TestBlobUserId, _fixture.CategoryId, fileStream);
+
             Assert.NotNull(response);
+            Assert.True(await _fixture.Context.Blobs.AnyAsync(q => q.CategoryId == _fixture.CategoryId && q.BlobContainer.UserId == _fixture.TestBlobUserId));
+            Assert.True(await _fixture.Context.BlobContainers.AnyAsync(q => q.UserId == _fixture.TestBlobUserId));
         }
 
         [Fact]
         public async Task Download()
         {
-            var service = GetBlobService();
-            var response = await service.Download(_testBlobUserId, TestBlobName);
+            var service = _fixture.CreateService();
+            var response = await service.Download(_fixture.TestBlobUserId, _fixture.BlobId);
 
             Assert.NotNull(response);
-        }
-
-        private static BlobService GetBlobService()
-        {
-            var builder = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
-
-            var connString = builder.GetConnectionString("AzureBlobStorage");
-
-            var blobClientService = new BlobServiceClient(connString);
-
-            return new BlobService(blobClientService);
         }
     }
 }

@@ -68,7 +68,10 @@ namespace DocKick.Data.Repositories
 
         protected virtual void Dispose(bool disposing)
         {
-            ReleaseUnmanagedResources();
+            if (disposing)
+            {
+                ReleaseUnmanagedResources();
+            }
         }
 
         private void ReleaseUnmanagedResources()
@@ -78,14 +81,9 @@ namespace DocKick.Data.Repositories
                 return;
             }
 
-            _context.Dispose();
+            _context?.Dispose();
 
             _disposed = true;
-        }
-
-        ~Repository()
-        {
-            Dispose(false);
         }
     }
 }

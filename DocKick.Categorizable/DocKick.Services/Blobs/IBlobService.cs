@@ -7,7 +7,8 @@ namespace DocKick.Services.Blobs
 {
     public interface IBlobService
     {
-        Task<BlobContentInfo> Upload(Guid userId,Stream fileStream);
-        Task<BlobDownloadInfo> Download(Guid userId, string blobName);
+        Task<BlobContentInfo> Upload(Guid userId, Guid categoryId, Stream fileStream);
+
+        Task<BlobDownloadInfo> Download(Guid userId, Guid blobId);
     }
 }

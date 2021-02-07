@@ -1,6 +1,6 @@
 ﻿using System;
 using DocKick.Data.Repositories;
-using DocKick.Entities.Category;
+using DocKick.Entities.Categories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

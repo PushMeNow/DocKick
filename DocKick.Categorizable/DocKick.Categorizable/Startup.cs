@@ -4,6 +4,7 @@ using Azure.Storage.Blobs;
 using DocKick.Categorizable.Extensions;
 using DocKick.Categorizable.Settings;
 using DocKick.Data.Extensions;
+using DocKick.Services.Blobs;
 using DocKick.Services.Categories;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
@@ -87,6 +88,7 @@ namespace DocKick.Categorizable
 
             services.AddScoped(_ => new BlobServiceClient(Configuration.GetConnectionString("AzureBlobStorage")));
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IBlobService, BlobService>();
         }
     }
 }

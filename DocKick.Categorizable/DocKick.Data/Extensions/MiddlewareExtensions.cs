@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocKick.Data.Repositories;
+using DocKick.Entities.Categories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DocKick.Data.Extensions
@@ -11,6 +13,9 @@ namespace DocKick.Data.Extensions
                                                           {
                                                               config.UseSqlServer(connectionString);
                                                           });
+
+            services.AddScoped<IBlobContainerRepository, BlobContainerRepository>();
+            services.AddScoped<IRepository<Category>, CategoryRepository>();
 
             return services;
         }

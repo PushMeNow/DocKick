@@ -1,4 +1,4 @@
-﻿using DocKick.Entities.Category;
+﻿using DocKick.Entities.Categories;
 
 namespace DocKick.Data.Repositories
 {

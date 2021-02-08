@@ -13,12 +13,17 @@ namespace DocKick.Services.Blobs
     public class BlobService : IBlobService
     {
         private readonly BlobServiceClient _blobServiceClient;
-        private readonly IBlobContainerRepository _blobRepository;
+        private readonly IBlobContainerRepository _blobContainerRepository;
+        private readonly IRepository<Blob> _blobRepository;
         private readonly IRepository<Category> _categoryRepository;
 
-        public BlobService(BlobServiceClient blobServiceClient, IBlobContainerRepository blobRepository, IRepository<Category> categoryRepository)
+        public BlobService(BlobServiceClient blobServiceClient,
+                           IBlobContainerRepository blobContainerRepository,
+                           IRepository<Blob> blobRepository,
+                           IRepository<Category> categoryRepository)
         {
             _blobServiceClient = blobServiceClient;
+            _blobContainerRepository = blobContainerRepository;
             _blobRepository = blobRepository;
             _categoryRepository = categoryRepository;
         }
@@ -51,7 +56,7 @@ namespace DocKick.Services.Blobs
             return response.Value;
         }
 
-        public async Task<BlobDownloadInfo> Download(Guid userId, Guid blobId)
+        public async Task<(BlobDownloadInfo BlobInfo, string BlobName)> Download(Guid userId, Guid blobId)
         {
             var containerEntity = await GetContainer(userId);
 
@@ -61,10 +66,10 @@ namespace DocKick.Services.Blobs
             var blob = await _blobRepository.GetById(blobId);
             var client = container.GetBlobClient(blob.Name);
             var response = await client.DownloadAsync();
-            
+
             ExceptionHelper.ThrowNotFoundIfEmpty(response, "Container");
 
-            return response.Value;
+            return (response.Value, blob.Name);
         }
 
         private async Task<BlobContainerClient> GetBlobContainer(string containerName)
@@ -78,7 +83,7 @@ namespace DocKick.Services.Blobs
 
         private async Task<BlobContainer> GetContainer(Guid userId)
         {
-            var blobContainer = await _blobRepository.GetByUserId(userId);
+            var blobContainer = await _blobContainerRepository.GetByUserId(userId);
 
             if (blobContainer is not null)
             {
@@ -91,8 +96,8 @@ namespace DocKick.Services.Blobs
                                 UserId = userId
                             };
 
-            await _blobRepository.Create(blobContainer);
-            await _blobRepository.Save();
+            await _blobContainerRepository.Create(blobContainer);
+            await _blobContainerRepository.Save();
 
             return blobContainer;
         }

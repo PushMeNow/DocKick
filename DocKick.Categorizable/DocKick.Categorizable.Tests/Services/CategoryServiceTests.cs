@@ -7,19 +7,13 @@ using Xunit;
 
 namespace DocKick.Categorizable.Tests.Services
 {
-    public class CategoryServiceTests : IClassFixture<CategoryServiceFixture>
+    public class CategoryServiceTests
     {
-        private readonly CategoryServiceFixture _fixture;
-
-        public CategoryServiceTests(CategoryServiceFixture fixture)
-        {
-            _fixture = fixture;
-        }
-
         [Fact]
         public async Task Create_OK()
         {
-            var service = _fixture.CreateService();
+            using var fixture = new CategoryServiceFixture();
+            var service = fixture.CreateService();
 
             var request = new CategoryRequest
                           {
@@ -36,44 +30,47 @@ namespace DocKick.Categorizable.Tests.Services
         [Fact]
         public async Task Update_OK()
         {
-            var service = _fixture.CreateService();
+            using var fixture = new CategoryServiceFixture();
+            var service = fixture.CreateService();
 
             var request = new CategoryRequest
                           {
                               Name = "Updated category"
                           };
 
-            var result = await service.Update(_fixture.UpdateCategoryId, request);
+            var result = await service.Update(fixture.UpdateCategoryId, request);
 
             Assert.NotNull(result);
             Assert.NotEqual(result.CategoryId, Guid.Empty);
-            Assert.Equal(result.CategoryId, _fixture.UpdateCategoryId);
+            Assert.Equal(result.CategoryId, fixture.UpdateCategoryId);
             Assert.Equal(result.Name, request.Name);
-            Assert.Equal(result.Name, (await _fixture.Context.Categories.FindAsync(_fixture.UpdateCategoryId))?.Name);
+            Assert.Equal(result.Name, (await fixture.Context.Categories.FindAsync(fixture.UpdateCategoryId))?.Name);
         }
 
         [Fact]
         public async Task Update_Parent_OK()
         {
-            var service = _fixture.CreateService();
+            using var fixture = new CategoryServiceFixture();
+            var service = fixture.CreateService();
 
-            var result = await service.UpdateParent(_fixture.UpdateCategoryId, _fixture.NewParentCategoryId);
-            var updatedCategory = await _fixture.Context.Categories.FindAsync(_fixture.UpdateCategoryId);
+            var result = await service.UpdateParent(fixture.UpdateCategoryId, fixture.NewParentCategoryId);
+            var updatedCategory = await fixture.Context.Categories.FindAsync(fixture.UpdateCategoryId);
 
             Assert.NotNull(result);
-            Assert.Equal(result.ParentId, _fixture.NewParentCategoryId);
-            Assert.Equal(updatedCategory.ParentId, _fixture.NewParentCategoryId);
+            Assert.Equal(result.ParentId, fixture.NewParentCategoryId);
+            Assert.Equal(updatedCategory.ParentId, fixture.NewParentCategoryId);
             Assert.NotNull(updatedCategory.Parent);
         }
 
         [Fact]
         public async Task Delete_OK()
         {
-            var service = _fixture.CreateService();
+            using var fixture = new CategoryServiceFixture();
+            var service = fixture.CreateService();
 
-            await service.Delete(_fixture.DeleteCategoryId);
+            await service.Delete(fixture.DeleteCategoryId);
 
-            Assert.DoesNotContain(_fixture.Context.Categories, q => q.CategoryId == _fixture.DeleteCategoryId);
+            Assert.DoesNotContain(fixture.Context.Categories, q => q.CategoryId == fixture.DeleteCategoryId);
         }
     }
 }

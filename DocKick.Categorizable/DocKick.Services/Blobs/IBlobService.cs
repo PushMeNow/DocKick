@@ -9,6 +9,6 @@ namespace DocKick.Services.Blobs
     {
         Task<BlobContentInfo> Upload(Guid userId, Guid categoryId, Stream fileStream);
 
-        Task<BlobDownloadInfo> Download(Guid userId, Guid blobId);
+        Task<(BlobDownloadInfo BlobInfo, string BlobName)> Download(Guid userId, Guid blobId);
     }
 }

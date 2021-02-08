@@ -7,7 +7,9 @@ namespace DocKick.Data.Repositories
 {
     public class BlobContainerRepository : Repository<BlobContainer>, IBlobContainerRepository
     {
-        public BlobContainerRepository(DbContext context) : base(context) { }
+        public BlobContainerRepository(CategorizableDbContext context) : base(context)
+        {
+        }
 
         public Task<BlobContainer> GetByUserId(Guid userId)
         {

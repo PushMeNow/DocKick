@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DocKick.DataTransferModels.Users;
 using DocKick.Entities.Users;
@@ -47,11 +48,18 @@ namespace DocKick.Authentication.Controllers
                 return View(model);
             }
 
-            var successful = await _authService.SignUp(model);
+            try
+            {
+                var successful = await _authService.SignUp(model);
 
-            return successful
-                ? Redirect(model.ReturnUrl)
-                : View(model);
+                return successful ? Redirect(model.ReturnUrl) : View(model);
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", e.Message);
+            }
+
+            return View(model);
         }
 
         [HttpGet("login")]
@@ -81,11 +89,18 @@ namespace DocKick.Authentication.Controllers
                 return View(model);
             }
 
-            var result = await _authService.Login(model);
+            try
+            {
+                var result = await _authService.Login(model);
 
-            return result
-                ? Redirect(model.ReturnUrl)
-                : View(model);
+                return result ? Redirect(model.ReturnUrl) : View(model);
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", e.Message);
+            }
+
+            return View(model);
         }
 
         [HttpGet]

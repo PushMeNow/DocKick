@@ -141,7 +141,7 @@ namespace DocKick.Services
 
         private async Task<bool> Login(User user, string password)
         {
-            ExceptionHelper.ThrowIfNotEmpty<AuthenticationException>(user);
+            ExceptionHelper.ThrowIfEmpty<AuthenticationException>(user);
 
             var checkResult = await _signInManager.CheckPasswordSignInAsync(user, password, false);
             
@@ -154,7 +154,7 @@ namespace DocKick.Services
 
         private async Task Login(User user)
         {
-            ExceptionHelper.ThrowIfNotEmpty<AuthenticationException>(user);
+            ExceptionHelper.ThrowIfEmpty<AuthenticationException>(user);
 
             await _signInManager.SignInAsync(user, false);
 

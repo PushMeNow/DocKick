@@ -11,7 +11,11 @@ namespace DocKick.Data.Extensions
         {
             services.AddDbContext<CategorizableDbContext>(config =>
                                                           {
-                                                              config.UseSqlServer(connectionString);
+                                                              config.UseSqlServer(connectionString,
+                                                                                  q =>
+                                                                                  {
+                                                                                      q.MigrationsAssembly("DocKick.Data");
+                                                                                  });
                                                           });
 
             services.AddScoped<IBlobContainerRepository, BlobContainerRepository>();

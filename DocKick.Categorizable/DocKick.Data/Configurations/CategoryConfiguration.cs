@@ -13,8 +13,7 @@ namespace DocKick.Data.Configurations
             builder.HasOne(q => q.Parent)
                    .WithOne(q => q.Child)
                    .IsRequired(false)
-                   .HasForeignKey<Category>(q => q.ParentId)
-                   .OnDelete(DeleteBehavior.SetNull);
+                   .HasForeignKey<Category>(q => q.ParentId);
 
             builder.HasMany(q => q.Blobs)
                    .WithOne(q => q.Category)

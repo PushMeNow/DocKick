@@ -6,6 +6,7 @@
 
 <div class="row justify-content-center">
     <form class="col-6" asp-action="Login" method="post" asp-antiforgery="true">
+        @Html.ValidationSummary(false)
         <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl">
         <div class="mb-2">
             <label asp-for="Email"></label>
@@ -24,7 +25,7 @@
                                                           })
 
         <hr/>
-        
+
         <div>
             If you would like to sign up click <a asp-action="SignUp" asp-route-ReturnUrl="@Model.ReturnUrl">here</a>.
         </div>

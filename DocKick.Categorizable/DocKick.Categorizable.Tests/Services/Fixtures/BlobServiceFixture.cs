@@ -26,12 +26,13 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
                                                     .Build();
 
             var connString = builder.GetConnectionString("AzureBlobStorage");
-
             var blobClientService = new BlobServiceClient(connString);
+            
             var blobContainerRepository = new BlobContainerRepository(Context);
             var categoryRepository = new CategoryRepository(Context);
+            var blobRepository = new BlobRepository(Context);
 
-            return new BlobService(blobClientService, blobContainerRepository, categoryRepository);
+            return new BlobService(blobClientService, blobContainerRepository, blobRepository, categoryRepository);
         }
 
         public static Stream GetTestPicture()

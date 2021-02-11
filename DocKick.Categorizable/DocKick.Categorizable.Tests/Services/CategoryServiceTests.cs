@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using DocKick.Categorizable.Tests.Services.Fixtures;
 using DocKick.Dtos.Categories;
@@ -17,6 +16,7 @@ namespace DocKick.Categorizable.Tests.Services
 
             var request = new CategoryRequest
                           {
+                              UserId = fixture.TestBlobUserId,
                               Name = "Test Category"
                           };
 
@@ -35,6 +35,7 @@ namespace DocKick.Categorizable.Tests.Services
 
             var request = new CategoryRequest
                           {
+                              UserId = fixture.TestBlobUserId,
                               Name = "Updated category"
                           };
 
@@ -53,10 +54,18 @@ namespace DocKick.Categorizable.Tests.Services
             using var fixture = new CategoryServiceFixture();
             var service = fixture.CreateService();
 
-            var result = await service.UpdateParent(fixture.UpdateCategoryId, fixture.NewParentCategoryId);
+            var request = new CategoryRequest
+                          {
+                              Name = "Test",
+                              UserId = fixture.TestBlobUserId,
+                              ParentId = fixture.NewParentCategoryId
+                          };
+
+            var result = await service.Update(fixture.UpdateCategoryId, request);
             var updatedCategory = await fixture.Context.Categories.FindAsync(fixture.UpdateCategoryId);
 
             Assert.NotNull(result);
+            Assert.NotNull(result.ParentId);
             Assert.Equal(result.ParentId, fixture.NewParentCategoryId);
             Assert.Equal(updatedCategory.ParentId, fixture.NewParentCategoryId);
             Assert.NotNull(updatedCategory.Parent);

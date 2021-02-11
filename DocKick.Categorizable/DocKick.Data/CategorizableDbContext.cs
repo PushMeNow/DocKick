@@ -10,7 +10,6 @@ namespace DocKick.Data
         public CategorizableDbContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Category> Categories { get; set; }
-        public DbSet<BlobContainer> BlobContainers { get; set; }
         public DbSet<Blob> Blobs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

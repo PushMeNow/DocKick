@@ -6,11 +6,9 @@ namespace DocKick.Entities.Blobs
     public class Blob
     {
         public Guid BlobId { get; set; }
-        public string Name { get; set; }
-        public Guid BlobContainerId { get; set; }
         public Guid CategoryId { get; set; }
+        public string Name { get; set; }
 
-        public virtual BlobContainer BlobContainer { get; set; }
         public virtual Category Category { get; set; }
     }
 }

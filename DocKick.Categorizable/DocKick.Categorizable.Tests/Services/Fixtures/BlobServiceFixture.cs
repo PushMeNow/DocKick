@@ -11,15 +11,15 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
 {
     public class BlobServiceFixture : BaseServiceFixture<BlobService>
     {
-        private const string TestBlobName = "9bfe1f0f-c430-480e-b4da-449afe756b29.jpg";
+        private const string TestBlobName = "464bb061-ef5d-424f-91e0-fdb9dc7dbc6f.jpg";
 
         public Guid BlobId { get; private set; }
 
         public Guid CategoryId { get; private set; }
 
-        public Guid TestBlobContainerId { get; private set; }
         public Guid TestBlobUserId { get; } = new("6f722fbe-cd44-4d27-b0ab-f1e54f6c1b96");
 
+        // TODO: Need to replace by Moq.
         public override BlobService CreateService()
         {
             var builder = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json")
@@ -28,11 +28,10 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
             var connString = builder.GetConnectionString("AzureBlobStorage");
             var blobClientService = new BlobServiceClient(connString);
             
-            var blobContainerRepository = new BlobContainerRepository(Context);
             var categoryRepository = new CategoryRepository(Context);
             var blobRepository = new BlobRepository(Context);
 
-            return new BlobService(blobClientService, blobContainerRepository, blobRepository, categoryRepository);
+            return new BlobService(blobClientService, blobRepository, categoryRepository);
         }
 
         public static Stream GetTestPicture()
@@ -43,13 +42,6 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
         protected override void InitDatabase()
         {
             base.InitDatabase();
-
-            TestBlobContainerId = Context.BlobContainers.Add(new BlobContainer
-                                                             {
-                                                                 UserId = TestBlobUserId,
-                                                                 Name = TestBlobUserId.ToString()
-                                                             })
-                                         .Entity.BlobContainerId;
 
             CategoryId = Context.Categories.Add(new Category
                                                 {
@@ -62,7 +54,6 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
                                        {
                                            Name = TestBlobName,
                                            CategoryId = CategoryId,
-                                           BlobContainerId = TestBlobContainerId
                                        })
                             .Entity.BlobId;
         }

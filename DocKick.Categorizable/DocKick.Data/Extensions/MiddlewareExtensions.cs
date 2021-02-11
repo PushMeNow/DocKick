@@ -1,4 +1,5 @@
 ﻿using DocKick.Data.Repositories;
+using DocKick.Entities.Blobs;
 using DocKick.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,8 +19,8 @@ namespace DocKick.Data.Extensions
                                                                                   });
                                                           });
 
-            services.AddScoped<IBlobContainerRepository, BlobContainerRepository>();
             services.AddScoped<IRepository<Category>, CategoryRepository>();
+            services.AddScoped<IRepository<Blob>, BlobRepository>();
 
             return services;
         }

@@ -13,10 +13,12 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
         public Guid UpdateCategoryId { get; set; }
         public Guid DeleteCategoryId { get; set; }
         public Guid NewParentCategoryId { get; set; }
-        
+        public Guid TestBlobUserId { get; } = new("6f722fbe-cd44-4d27-b0ab-f1e54f6c1b96");
+
         public override CategoryService CreateService()
         {
             var repo = new CategoryRepository(Context);
+
             return new CategoryService(repo, MapperHelper.Instance);
         }
 
@@ -26,19 +28,22 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
 
             UpdateCategoryId = Context.Categories.Add(new Category()
                                                       {
-                                                          Name = UpdateCategoryName
+                                                          Name = UpdateCategoryName,
+                                                          UserId = TestBlobUserId
                                                       })
                                       .Entity.CategoryId;
 
             DeleteCategoryId = Context.Categories.Add(new Category()
                                                       {
-                                                          Name = "Deleting"
+                                                          Name = "Deleting",
+                                                          UserId = TestBlobUserId
                                                       })
                                       .Entity.CategoryId;
 
             NewParentCategoryId = Context.Categories.Add(new Category()
                                                          {
-                                                             Name = "Parent"
+                                                             Name = "Parent",
+                                                             UserId = TestBlobUserId
                                                          })
                                          .Entity.CategoryId;
         }

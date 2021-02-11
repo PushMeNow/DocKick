@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using DocKick.Data.Repositories;
+using DocKick.Dtos.Blobs;
 using DocKick.Entities.Blobs;
 using DocKick.Entities.Categories;
 using DocKick.Exceptions;
@@ -12,94 +13,84 @@ namespace DocKick.Services.Blobs
 {
     public class BlobService : IBlobService
     {
-        private readonly BlobServiceClient _blobServiceClient;
-        private readonly IBlobContainerRepository _blobContainerRepository;
+        private const string BlobContainerName = "dockickcontainer";
+        
         private readonly IRepository<Blob> _blobRepository;
+        private readonly BlobServiceClient _blobServiceClient;
         private readonly IRepository<Category> _categoryRepository;
 
-        public BlobService(BlobServiceClient blobServiceClient,
-                           IBlobContainerRepository blobContainerRepository,
-                           IRepository<Blob> blobRepository,
-                           IRepository<Category> categoryRepository)
+        public BlobService(BlobServiceClient blobServiceClient, IRepository<Blob> blobRepository, IRepository<Category> categoryRepository)
         {
             _blobServiceClient = blobServiceClient;
-            _blobContainerRepository = blobContainerRepository;
             _blobRepository = blobRepository;
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<BlobContentInfo> Upload(Guid userId, Guid categoryId, Stream fileStream)
+        public async Task<BlobUploadModel> Upload(Guid categoryId, Stream fileStream, string contentType = "application/jpeg")
         {
-            var containerEntity = await GetContainer(userId);
+            var category = await _categoryRepository.GetById(categoryId);
 
-            ExceptionHelper.ThrowNotFoundIfEmpty(containerEntity, "Container");
+            ExceptionHelper.ThrowNotFoundIfEmpty(category, "Category");
 
-            var container = await GetBlobContainer(containerEntity.Name);
+            var container = _blobServiceClient.GetBlobContainerClient(BlobContainerName);
             var blobName = $"{Guid.NewGuid()}.jpg";
-            var response = await container.UploadBlobAsync(blobName, fileStream);
+            var blobClient = container.GetBlobClient(GetFullBlobName(category.UserId, blobName));
+
+            var response = await blobClient.UploadAsync(fileStream,
+                                                        new BlobHttpHeaders
+                                                        {
+                                                            ContentType = contentType
+                                                        });
 
             ExceptionHelper.ThrowNotFoundIfEmpty(response, "Blob");
-
-            var category = await _categoryRepository.GetById(categoryId);
 
             var blob = new Blob
                        {
                            Name = blobName,
-                           CategoryId = categoryId,
-                           BlobContainerId = containerEntity.BlobContainerId
+                           CategoryId = categoryId
                        };
 
             category.Blobs.Add(blob);
 
             await _categoryRepository.Save();
 
-            return response.Value;
+            var model = new BlobUploadModel
+                        {
+                            BlobId = blob.BlobId,
+                            CategoryId = categoryId,
+                            BlobName = blob.Name,
+                            BlobContentInfo = response.Value
+                        };
+
+            return model;
         }
 
-        public async Task<(BlobDownloadInfo BlobInfo, string BlobName)> Download(Guid userId, Guid blobId)
+        public async Task<BlobDownloadModel> Download(Guid blobId)
         {
-            var containerEntity = await GetContainer(userId);
-
-            ExceptionHelper.ThrowNotFoundIfEmpty(containerEntity, "Container");
-
-            var container = await GetBlobContainer(containerEntity.Name);
             var blob = await _blobRepository.GetById(blobId);
-            var client = container.GetBlobClient(blob.Name);
+
+            ExceptionHelper.ThrowNotFoundIfEmpty(blob, "Blob");
+
+            var container = _blobServiceClient.GetBlobContainerClient(BlobContainerName);
+            var client = container.GetBlobClient(GetFullBlobName(blob.Category.UserId, blob.Name));
             var response = await client.DownloadAsync();
 
             ExceptionHelper.ThrowNotFoundIfEmpty(response, "Container");
 
-            return (response.Value, blob.Name);
+            var model = new BlobDownloadModel
+                        {
+                            BlobId = blob.BlobId,
+                            BlobName = blob.Name,
+                            CategoryId = blob.CategoryId,
+                            BlobDownloadInfo = response.Value
+                        };
+
+            return model;
         }
 
-        private async Task<BlobContainerClient> GetBlobContainer(string containerName)
+        private static string GetFullBlobName(Guid userId, string blobName)
         {
-            var blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-
-            await blobContainerClient.CreateIfNotExistsAsync();
-
-            return blobContainerClient;
-        }
-
-        private async Task<BlobContainer> GetContainer(Guid userId)
-        {
-            var blobContainer = await _blobContainerRepository.GetByUserId(userId);
-
-            if (blobContainer is not null)
-            {
-                return blobContainer;
-            }
-
-            blobContainer = new BlobContainer()
-                            {
-                                Name = userId.ToString(),
-                                UserId = userId
-                            };
-
-            await _blobContainerRepository.Create(blobContainer);
-            await _blobContainerRepository.Save();
-
-            return blobContainer;
+            return $"{userId}/{blobName}";
         }
     }
 }

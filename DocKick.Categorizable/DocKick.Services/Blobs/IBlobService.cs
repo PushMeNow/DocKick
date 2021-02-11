@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Azure.Storage.Blobs.Models;
+using DocKick.Dtos.Blobs;
 
 namespace DocKick.Services.Blobs
 {
     public interface IBlobService
     {
-        Task<BlobContentInfo> Upload(Guid userId, Guid categoryId, Stream fileStream);
+        Task<BlobUploadModel> Upload(Guid categoryId, Stream fileStream, string contentType = "application/jpeg");
 
-        Task<(BlobDownloadInfo BlobInfo, string BlobName)> Download(Guid userId, Guid blobId);
+        Task<BlobDownloadModel> Download(Guid blobId);
     }
 }

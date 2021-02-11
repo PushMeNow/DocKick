@@ -24,20 +24,5 @@ namespace DocKick.Services.Categories
                              .ProjectTo<CategoryModel>(Mapper.ConfigurationProvider)
                              .ToArrayAsync();
         }
-
-        public async Task<CategoryModel> UpdateParent(Guid categoryId, Guid parentId)
-        {
-            ExceptionHelper.ThrowParameterInvalidIfTrue(categoryId == parentId, "Category and his parent cannot be same.");
-            
-            var category = await Repository.GetById(categoryId);
-            
-            ExceptionHelper.ThrowNotFoundIfEmpty(category, "Category");
-
-            category.ParentId = parentId;
-
-            await Repository.Save();
-
-            return Map<CategoryModel>(category);
-        }
     }
 }

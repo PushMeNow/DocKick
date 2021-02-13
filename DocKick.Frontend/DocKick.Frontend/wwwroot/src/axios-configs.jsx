@@ -3,12 +3,20 @@ import { useContext } from "react";
 import { AuthContext } from "./context/auth-context";
 
 export const AxiosConfig = () => {
-    const context = useContext(AuthContext)
-    const authHeader = context.getAuthorizationHeader();
+    const authContext = useContext(AuthContext)
+    const authHeader = authContext.getAuthorizationHeader();
 
     if (!!authHeader) {
         axios.defaults.headers.common['Authorization'] = authHeader;
     }
-    
+
+    axios.interceptors.request.use(requestConfig => {
+        if (requestConfig.before) {
+            requestConfig.before();
+        }
+
+        return requestConfig;
+    });
+
     return <></>;
 }

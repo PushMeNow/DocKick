@@ -16,10 +16,10 @@ namespace DocKick.Categorizable.Tests.Services
             using var fixture = new BlobServiceFixture();
             var blobService = fixture.CreateService();
 
-            var response = await blobService.Upload(fixture.CategoryId, fileStream);
+            var response = await blobService.Upload(fixture.TestBlobUserId, fileStream);
 
             Assert.NotNull(response);
-            Assert.True(await fixture.Context.Blobs.AnyAsync(q => q.CategoryId == fixture.CategoryId));
+            Assert.True(await fixture.Context.Blobs.AnyAsync(q => q.UserId == fixture.TestBlobUserId));
         }
 
         [Fact]

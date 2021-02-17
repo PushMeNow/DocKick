@@ -14,27 +14,23 @@ namespace DocKick.Services.Blobs
     public class BlobService : IBlobService
     {
         private const string BlobContainerName = "dockickcontainer";
-        
+
         private readonly IRepository<Blob> _blobRepository;
         private readonly BlobServiceClient _blobServiceClient;
-        private readonly IRepository<Category> _categoryRepository;
 
-        public BlobService(BlobServiceClient blobServiceClient, IRepository<Blob> blobRepository, IRepository<Category> categoryRepository)
+        public BlobService(BlobServiceClient blobServiceClient, IRepository<Blob> blobRepository)
         {
             _blobServiceClient = blobServiceClient;
             _blobRepository = blobRepository;
-            _categoryRepository = categoryRepository;
         }
 
-        public async Task<BlobUploadModel> Upload(Guid categoryId, Stream fileStream, string contentType = "application/jpeg")
+        public async Task<BlobUploadModel> Upload(Guid userId, Stream fileStream, string contentType = "application/jpeg")
         {
-            var category = await _categoryRepository.GetById(categoryId);
-
-            ExceptionHelper.ThrowNotFoundIfEmpty(category, "Category");
-
+            ExceptionHelper.ThrowArgumentNullIfEmpty(userId, nameof(userId));
+            
             var container = _blobServiceClient.GetBlobContainerClient(BlobContainerName);
             var blobName = $"{Guid.NewGuid()}.jpg";
-            var blobClient = container.GetBlobClient(GetFullBlobName(category.UserId, blobName));
+            var blobClient = container.GetBlobClient(GetFullBlobName(userId, blobName));
 
             var response = await blobClient.UploadAsync(fileStream,
                                                         new BlobHttpHeaders
@@ -47,18 +43,17 @@ namespace DocKick.Services.Blobs
             var blob = new Blob
                        {
                            Name = blobName,
-                           CategoryId = categoryId
+                           UserId = userId
                        };
 
-            category.Blobs.Add(blob);
-
-            await _categoryRepository.Save();
+            await _blobRepository.Create(blob);
+            await _blobRepository.Save();
 
             var model = new BlobUploadModel
                         {
                             BlobId = blob.BlobId,
-                            CategoryId = categoryId,
                             BlobName = blob.Name,
+                            UserId = userId,
                             BlobContentInfo = response.Value
                         };
 

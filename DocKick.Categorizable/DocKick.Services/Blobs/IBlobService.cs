@@ -7,7 +7,7 @@ namespace DocKick.Services.Blobs
 {
     public interface IBlobService
     {
-        Task<BlobUploadModel> Upload(Guid categoryId, Stream fileStream, string contentType = "application/jpeg");
+        Task<BlobUploadModel> Upload(Guid userId, Stream fileStream, string contentType = "application/jpeg");
 
         Task<BlobDownloadModel> Download(Guid blobId);
     }

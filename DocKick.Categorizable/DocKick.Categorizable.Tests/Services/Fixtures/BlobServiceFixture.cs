@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace DocKick.Categorizable.Tests.Services.Fixtures
 {
-    public class BlobServiceFixture : BaseServiceFixture<BlobService>
+    public class BlobServiceFixture : BaseServiceFixture<IBlobService>
     {
         private const string TestBlobName = "464bb061-ef5d-424f-91e0-fdb9dc7dbc6f.jpg";
 
@@ -20,7 +20,7 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
         public Guid TestBlobUserId { get; } = new("6f722fbe-cd44-4d27-b0ab-f1e54f6c1b96");
 
         // TODO: Need to replace by Moq.
-        public override BlobService CreateService()
+        public override IBlobService CreateService()
         {
             var builder = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json")
                                                     .Build();
@@ -28,10 +28,9 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
             var connString = builder.GetConnectionString("AzureBlobStorage");
             var blobClientService = new BlobServiceClient(connString);
             
-            var categoryRepository = new CategoryRepository(Context);
             var blobRepository = new BlobRepository(Context);
 
-            return new BlobService(blobClientService, blobRepository, categoryRepository);
+            return new BlobService(blobClientService, blobRepository);
         }
 
         public static Stream GetTestPicture()

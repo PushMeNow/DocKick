@@ -12,7 +12,7 @@ namespace DocKick.Entities.Categories
         public string Name { get; set; }
 
         public virtual Category Parent { get; set; }
-        public virtual Category Child { get; set; }
+        public virtual ICollection<Category> Children { get; set; }
         public virtual ICollection<Blob> Blobs { get; set; }
     }
 }

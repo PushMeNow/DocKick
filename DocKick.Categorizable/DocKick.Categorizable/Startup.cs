@@ -6,6 +6,7 @@ using DocKick.Categorizable.Settings;
 using DocKick.Data.Extensions;
 using DocKick.Services.Blobs;
 using DocKick.Services.Categories;
+using FluentValidation.AspNetCore;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,7 +23,7 @@ namespace DocKick.Categorizable
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -61,7 +62,12 @@ namespace DocKick.Categorizable
 
             services.AddSingleton(authSettings);
 
-            services.AddControllers();
+            services.AddControllers()
+                    .AddFluentValidation(options =>
+                                         {
+                                             options.RunDefaultMvcValidationAfterFluentValidationExecutes = true;
+                                             options.RegisterValidatorsFromAssembly(Assembly.Load("DocKick.Validation"));
+                                         });
 
             services.AddSwaggerConfigs();
 

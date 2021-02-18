@@ -6,9 +6,12 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="9.5.1" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.5.1" />
+        <PackageReference Include="IdentityServer4" Version="4.1.1" />
         <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.2" NoWarn="NU1605" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.2" NoWarn="NU1605" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.2">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -20,6 +23,7 @@
       <ProjectReference Include="..\DocKick.Data\DocKick.Data.csproj" />
       <ProjectReference Include="..\DocKick.Mapper\DocKick.Mapper.csproj" />
       <ProjectReference Include="..\DocKick.Services\DocKick.Services.csproj" />
+      <ProjectReference Include="..\DocKick.Validation\DocKick.Validation.csproj" />
     </ItemGroup>
 
 </Project>

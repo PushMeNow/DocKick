@@ -22,21 +22,31 @@ namespace DocKick.Categorizable.Controllers
         }
 
         [HttpPost]
-        public async Task<CategoryModel> Create([FromBody]CategoryRequest request)
+        public async Task<CategoryModel> Create([FromBody] CategoryRequest request)
         {
+            CheckValidation();
+            SetUserId(request);
             return await _categoryService.Create(request);
         }
 
         [HttpPut("categoryId:Guid")]
-        public async Task<CategoryModel> Update([FromRoute] Guid categoryId, [FromBody]CategoryRequest request)
+        public async Task<CategoryModel> Update([FromRoute] Guid categoryId, [FromBody] CategoryRequest request)
         {
+            CheckValidation();
+            SetUserId(request);
             return await _categoryService.Update(categoryId, request);
         }
 
         [HttpDelete("{categoryId:Guid}")]
         public async Task Delete([FromRoute] Guid categoryId)
         {
+            CheckValidation();
             await _categoryService.Delete(categoryId);
+        }
+
+        private void SetUserId(CategoryRequest request)
+        {
+            request.UserId = UserId;
         }
     }
 }

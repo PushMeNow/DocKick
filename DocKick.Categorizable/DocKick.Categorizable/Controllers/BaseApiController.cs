@@ -1,5 +1,7 @@
 ﻿using System;
-using DocKick.Categorizable.Extensions;
+using System.Linq;
+using FluentValidation;
+using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +12,14 @@ namespace DocKick.Categorizable.Controllers
     [Route("[controller]")]
     public abstract class BaseApiController : ControllerBase
     {
-        protected Guid UserId => User.GetUserId();
+        protected Guid UserId => Guid.Parse(User.GetSubjectId());
+
+        protected void CheckValidation()
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new ValidationException(string.Join("\r\n", ModelState.Values.SelectMany(q => q.Errors.Select(w => w.ErrorMessage))));
+            }
+        }
     }
 }

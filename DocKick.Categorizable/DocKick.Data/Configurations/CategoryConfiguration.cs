@@ -11,9 +11,9 @@ namespace DocKick.Data.Configurations
             builder.HasKey(q => q.CategoryId);
 
             builder.HasOne(q => q.Parent)
-                   .WithOne(q => q.Child)
+                   .WithMany(q => q.Children)
                    .IsRequired(false)
-                   .HasForeignKey<Category>(q => q.ParentId);
+                   .HasForeignKey(q => q.ParentId);
 
             builder.HasMany(q => q.Blobs)
                    .WithOne(q => q.Category)

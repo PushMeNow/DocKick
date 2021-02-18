@@ -22,16 +22,22 @@ const App = React.memo(() => (
                                     position={ "bottom-center" } />
                     <Header />
                     <Container>
-                        <Switch>
-                            <Route path="/login-callback"
-                                   component={ PublicLayout } />
-                            <Route path="/logout-callback"
-                                   component={ PublicLayout } />
-                            <Route path="/profile"
-                                   component={ PublicLayout } />
-                            <PrivateRoute path="/"
-                                          component={ PrivateLayout } />
-                        </Switch>
+                        <div className="mt-3">
+                            <Switch>
+                                <Route path="/login-callback"
+                                       component={ PublicLayout } />
+                                <Route path="/logout-callback"
+                                       component={ PublicLayout } />
+                                <Route path="/profile"
+                                       component={ PublicLayout } />
+                                <Route path="/categories"
+                                       component={ PublicLayout } />
+                                <Route path="/category-tree"
+                                       component={ PublicLayout } />
+                                <PrivateRoute path="/"
+                                              component={ PrivateLayout } />
+                            </Switch>
+                        </div>
                     </Container>
                 </LoaderProvider>
             </AuthProvider>

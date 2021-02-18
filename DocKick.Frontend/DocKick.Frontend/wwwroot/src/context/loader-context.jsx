@@ -29,8 +29,8 @@ export class LoaderProvider extends Component {
 
         return (
             <LoaderContext.Provider value={ providerValues }>
-                { this.props.children }
                 <Loader showLoader={ loading } />
+                { this.props.children }
             </LoaderContext.Provider>
         );
     }

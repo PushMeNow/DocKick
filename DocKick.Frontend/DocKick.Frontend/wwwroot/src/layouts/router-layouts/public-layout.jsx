@@ -3,6 +3,8 @@ import { Route, Switch } from 'react-router-dom';
 import { LoginCallback } from "../../components/auth/login-callback";
 import { LogoutCallback } from "../../components/auth/logout-callback";
 import Profile from "../../pages/user/profile";
+import { CategoryPage } from "../../pages/categories/category";
+import { CategoryTree } from "../../pages/categories/category-tree";
 
 const PublicLayout = () => {
     return (
@@ -13,6 +15,10 @@ const PublicLayout = () => {
                    component={ LogoutCallback } />
             <Route path="/profile"
                    component={ Profile } />
+            <Route path="/categories"
+                   component={ CategoryPage } />
+            <Route path="/category-tree"
+                   component={ CategoryTree } />
         </Switch>
     )
 }

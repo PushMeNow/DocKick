@@ -1,10 +1,15 @@
 ﻿import React, { useContext } from "react";
 import { AuthContext } from "../../context/auth-context";
+import MainPage from "../../pages/main/main-page";
+import { LoaderContext } from "../../context/loader-context";
 
 export const LogoutCallback = () => {
-    const context = useContext(AuthContext);
-
-    context.signoutRedirectCallback();
+    const { signoutRedirectCallback } = useContext(AuthContext);
+    const { showLoader } = useContext(LoaderContext);
     
-    return <div>loading...</div>
+    showLoader();
+
+    signoutRedirectCallback();
+
+    return <MainPage />
 }

@@ -3,7 +3,8 @@ import axios from "axios";
 import { combineCategorizableUrl } from "../../url-helper";
 import { LoaderContext } from "../../context/loader-context";
 import { Button, Table } from "react-bootstrap";
-import { AddCategoryButton } from "./add-category-button";
+import CategoryModalForm from "./category-modal-form";
+import { toast } from "react-toastify";
 
 export class CategoryList extends Component {
     constructor(props) {
@@ -11,6 +12,11 @@ export class CategoryList extends Component {
 
         this.state = {
             data: null
+        }
+
+        this.modal = null;
+        this.setModal = el => {
+            this.modal = el;
         }
 
         this.loadData = this.loadData.bind(this);
@@ -41,24 +47,58 @@ export class CategoryList extends Component {
     renderTableBody() {
         return (!this.state.data.length
             ? this.renderNothingFound()
-            : this.state.data.map(item => (
-                <tr>
-                    <td>
-                        { item.name }
-                    </td>
-                    <td align="center">
-                        <Button variant="secondary">Edit</Button>
-                        <Button variant="danger">Delete</Button>
-                    </td>
-                </tr>
-            )));
+            : this.state.data.map(category => {
+                const showModal = () => {
+                    this.modal.setCategory(category);
+                    this.modal.showModal();
+                }
+
+                const deleteCategory = () => {
+                    if (!confirm(`Are you sure want delete category ${ category.name }?`)) {
+                        return;
+                    }
+
+                    const loaderContext = this.context;
+
+                    axios.delete(combineCategorizableUrl(`categories/${ category.categoryId }`), {
+                        before: loaderContext.showLoader
+                    }).then(() => {
+                        toast(`Category ${ category.name } was deleted successfully.`, { type: "success" });
+                    }).finally(() => {
+                        loaderContext.hideLoader();
+                        this.loadData();
+                    });
+                }
+
+                return (
+                    <tr>
+                        <td>
+                            { category.name }
+                        </td>
+                        <td align="center">
+                            <Button variant="secondary"
+                                    onClick={ showModal }>Edit</Button>
+                            <Button variant="danger"
+                                    onClick={ deleteCategory }>Delete</Button>
+                        </td>
+                    </tr>
+                )
+            }));
     }
 
     render() {
+        const showModal = () => {
+            this.modal.setCategory();
+            this.modal.showModal();
+        }
+
         return (
             <>
                 <div className="mb-3 d-flex justify-content-end">
-                    <AddCategoryButton updateTable={ this.loadData } />
+                    <CategoryModalForm ref={ this.setModal }
+                                       updateTable={ this.loadData } />
+                    <Button variant="success"
+                            onClick={ showModal }>Add Category</Button>
                 </div>
                 <Table striped
                        bordered

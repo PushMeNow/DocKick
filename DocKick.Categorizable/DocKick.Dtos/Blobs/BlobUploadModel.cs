@@ -2,8 +2,9 @@
 
 namespace DocKick.Dtos.Blobs
 {
-    public class BlobUploadModel : BlobModel
+    public class BlobUploadModel
     {
+        public BlobModel Blob { get; set; }
         public BlobContentInfo BlobContentInfo { get; set; }
     }
 }

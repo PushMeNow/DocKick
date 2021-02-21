@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using DocKick.Dtos.Categories;
 using DocKick.Services.Categories;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace DocKick.Categorizable.Controllers
     {
         private readonly ICategoryService _categoryService;
 
-        public CategoriesController(ICategoryService categoryService)
+        public CategoriesController(ICategoryService categoryService, IMapper mapper) : base(mapper)
         {
             _categoryService = categoryService;
         }
@@ -20,7 +21,7 @@ namespace DocKick.Categorizable.Controllers
         {
             return await _categoryService.GetCategoriesByUserId(UserId);
         }
-        
+
         [HttpGet("category-tree")]
         public async Task<CategoryModel[]> GetCategoryTree()
         {
@@ -32,7 +33,10 @@ namespace DocKick.Categorizable.Controllers
         {
             CheckValidation();
             SetUserId(request);
-            return await _categoryService.Create(request);
+
+            var model = Mapper.Map<CategoryModel>(request);
+
+            return await _categoryService.Create(model);
         }
 
         [HttpPut("{categoryId:Guid}")]
@@ -40,7 +44,10 @@ namespace DocKick.Categorizable.Controllers
         {
             CheckValidation();
             SetUserId(request);
-            return await _categoryService.Update(categoryId, request);
+
+            var model = Mapper.Map<CategoryModel>(request);
+
+            return await _categoryService.Update(categoryId, model);
         }
 
         [HttpDelete("{categoryId:Guid}")]

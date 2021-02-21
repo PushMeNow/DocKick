@@ -10,5 +10,7 @@ namespace DocKick.Services.Blobs
         Task<BlobUploadModel> Upload(Guid userId, Stream fileStream, string contentType = "application/jpeg");
 
         Task<BlobDownloadModel> Download(Guid blobId);
+
+        Task<bool> FullDelete(Guid blobId);
     }
 }

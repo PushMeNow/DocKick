@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using AutoMapper;
 using FluentValidation;
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,13 @@ namespace DocKick.Categorizable.Controllers
     [Route("[controller]")]
     public abstract class BaseApiController : ControllerBase
     {
+        public IMapper Mapper { get; }
+
+        public BaseApiController(IMapper mapper)
+        {
+            Mapper = mapper;
+        }
+        
         protected Guid UserId => Guid.Parse(User.GetSubjectId());
 
         protected void CheckValidation()

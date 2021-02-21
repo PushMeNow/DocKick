@@ -6,12 +6,11 @@ using AutoMapper.QueryableExtensions;
 using DocKick.Data.Repositories;
 using DocKick.Dtos.Categories;
 using DocKick.Entities.Categories;
-using DocKick.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace DocKick.Services.Categories
 {
-    public class CategoryService : BaseDataService<IRepository<Category>, Category, CategoryModel, CategoryRequest, Guid>, ICategoryService
+    public class CategoryService : BaseDataService<IRepository<Category>, Category, CategoryModel, Guid>, ICategoryService
     {
         public CategoryService(IRepository<Category> repository, IMapper mapper) : base(repository, mapper) { }
 

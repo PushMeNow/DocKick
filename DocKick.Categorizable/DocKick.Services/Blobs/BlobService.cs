@@ -1,36 +1,36 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using AutoMapper;
+using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using DocKick.Data.Repositories;
 using DocKick.Dtos.Blobs;
+using DocKick.Dtos.Categories;
 using DocKick.Entities.Blobs;
 using DocKick.Entities.Categories;
 using DocKick.Exceptions;
 
 namespace DocKick.Services.Blobs
 {
-    public class BlobService : IBlobService
+    public class BlobService : BaseDataService<IRepository<Blob>, Blob, BlobModel, Guid>, IBlobService
     {
         private const string BlobContainerName = "dockickcontainer";
 
-        private readonly IRepository<Blob> _blobRepository;
-        private readonly BlobServiceClient _blobServiceClient;
+        private readonly BlobContainerClient _blobContainer;
 
-        public BlobService(BlobServiceClient blobServiceClient, IRepository<Blob> blobRepository)
+        public BlobService(BlobServiceClient blobServiceClient, IRepository<Blob> blobRepository, IMapper mapper) : base(blobRepository, mapper)
         {
-            _blobServiceClient = blobServiceClient;
-            _blobRepository = blobRepository;
+            _blobContainer = blobServiceClient.GetBlobContainerClient(BlobContainerName);
         }
 
         public async Task<BlobUploadModel> Upload(Guid userId, Stream fileStream, string contentType = "application/jpeg")
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(userId, nameof(userId));
-            
-            var container = _blobServiceClient.GetBlobContainerClient(BlobContainerName);
+
             var blobName = $"{Guid.NewGuid()}.jpg";
-            var blobClient = container.GetBlobClient(GetFullBlobName(userId, blobName));
+            var blobClient = GetBlobClient(userId, blobName);
 
             var response = await blobClient.UploadAsync(fileStream,
                                                         new BlobHttpHeaders
@@ -40,34 +40,29 @@ namespace DocKick.Services.Blobs
 
             ExceptionHelper.ThrowNotFoundIfEmpty(response, "Blob");
 
-            var blob = new Blob
-                       {
-                           Name = blobName,
-                           UserId = userId
-                       };
-
-            await _blobRepository.Create(blob);
-            await _blobRepository.Save();
+            var createModel = new BlobModel()
+                              {
+                                  BlobName = blobName,
+                                  UserId = userId
+                              };
 
             var model = new BlobUploadModel
                         {
-                            BlobId = blob.BlobId,
-                            BlobName = blob.Name,
-                            UserId = userId,
+                            Blob = await Create(createModel),
                             BlobContentInfo = response.Value
                         };
 
             return model;
         }
 
+        // TODO: Need to figure out how to init blob link in Azure Storage.
         public async Task<BlobDownloadModel> Download(Guid blobId)
         {
-            var blob = await _blobRepository.GetById(blobId);
+            var blob = await Repository.GetById(blobId);
 
             ExceptionHelper.ThrowNotFoundIfEmpty(blob, "Blob");
 
-            var container = _blobServiceClient.GetBlobContainerClient(BlobContainerName);
-            var client = container.GetBlobClient(GetFullBlobName(blob.Category.UserId, blob.Name));
+            var client = GetBlobClient(blob.UserId, blob.Name);
             var response = await client.DownloadAsync();
 
             ExceptionHelper.ThrowNotFoundIfEmpty(response, "Container");
@@ -83,9 +78,37 @@ namespace DocKick.Services.Blobs
             return model;
         }
 
+        public async Task<bool> FullDelete(Guid blobId)
+        {
+            ExceptionHelper.ThrowArgumentNullIfEmpty(blobId, nameof(blobId));
+
+            var blobEntity = await Repository.GetById(blobId);
+
+            if (blobEntity is null)
+            {
+                return true;
+            }
+
+            var client = GetBlobClient(blobEntity.UserId, blobEntity.Name);
+            var response = await client.DeleteIfExistsAsync();
+
+            ExceptionHelper.ThrowParameterNullIfEmpty(response, "Incorrect response of Azure Blobs.");
+
+            await Delete(blobId);
+
+            return response.Value;
+        }
+
         private static string GetFullBlobName(Guid userId, string blobName)
         {
             return $"{userId}/{blobName}";
+        }
+
+        private BlobClient GetBlobClient(Guid userId, string blobName)
+        {
+            ExceptionHelper.ThrowArgumentNullIfEmpty((userId, nameof(userId)), (blobName, nameof(blobName)));
+
+            return _blobContainer.GetBlobClient(GetFullBlobName(userId, blobName));
         }
     }
 }

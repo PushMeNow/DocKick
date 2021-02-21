@@ -13,16 +13,22 @@ export class CategoryList extends Component {
             data: null
         }
 
-        this.fillData = this.fillData.bind(this);
+        this.loadData = this.loadData.bind(this);
     }
 
     componentDidMount() {
         if (this.state.data === null) {
-            this.fillData();
+            this.loadData();
         }
     }
 
-    fillData() {
+    renderNothingFound() {
+        return <tr>
+            <td colSpan={ 2 }>Nothing found</td>
+        </tr>
+    }
+
+    loadData() {
         let loaderContext = this.context;
 
         axios.get(combineCategorizableUrl('categories'), {
@@ -34,9 +40,7 @@ export class CategoryList extends Component {
 
     renderTableBody() {
         return (!this.state.data.length
-            ? <tr>
-                <td colSpan={ 2 }>Nothing found</td>
-            </tr>
+            ? this.renderNothingFound()
             : this.state.data.map(item => (
                 <tr>
                     <td>
@@ -54,7 +58,7 @@ export class CategoryList extends Component {
         return (
             <>
                 <div className="mb-3 d-flex justify-content-end">
-                    <AddCategoryButton updateTable={ this.fillData } />
+                    <AddCategoryButton updateTable={ this.loadData } />
                 </div>
                 <Table striped
                        bordered
@@ -67,9 +71,7 @@ export class CategoryList extends Component {
                     </thead>
                     <tbody>
                     { this.state.data === null
-                        ? <tr>
-                            <td colSpan={ 2 }>Nothing found</td>
-                        </tr>
+                        ? this.renderNothingFound()
                         : this.renderTableBody() }
                     </tbody>
                 </Table>

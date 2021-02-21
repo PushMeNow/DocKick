@@ -4,7 +4,7 @@ using DocKick.Dtos.Categories;
 
 namespace DocKick.Services.Categories
 {
-    public interface ICategoryService : IDataService<CategoryModel, CategoryRequest, Guid>
+    public interface ICategoryService : IDataService<CategoryModel, Guid>
     {
         Task<CategoryModel[]> GetCategoriesByUserId(Guid userId);
 

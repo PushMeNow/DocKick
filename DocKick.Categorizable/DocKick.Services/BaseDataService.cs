@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DocKick.Services
 {
-    public abstract class BaseDataService<TRepository, TEntity, TModel, TRequest, TId> : IDataService<TModel, TRequest, TId>
+    public abstract class BaseDataService<TRepository, TEntity, TModel, TId> : IDataService<TModel, TId>
         where TEntity : class
         where TRepository : IRepository<TEntity>
         where TId : struct
@@ -39,11 +39,11 @@ namespace DocKick.Services
             return mapped;
         }
 
-        public virtual async Task<TModel> Create(TRequest request)
+        public virtual async Task<TModel> Create(TModel model)
         {
-            ExceptionHelper.ThrowArgumentNullIfEmpty(request, nameof(request));
+            ExceptionHelper.ThrowArgumentNullIfEmpty(model, nameof(model));
 
-            var entity = Map(request);
+            var entity = Map(model);
 
             await Repository.Create(entity);
             await Repository.Save();
@@ -53,7 +53,7 @@ namespace DocKick.Services
             return mapped;
         }
 
-        public virtual async Task<TModel> Update(TId id, TRequest request)
+        public virtual async Task<TModel> Update(TId id, TModel request)
         {
             var entity = await Repository.GetById(id);
 
@@ -75,7 +75,7 @@ namespace DocKick.Services
 
         #region Maps
 
-        protected TEntity Map(TRequest request)
+        protected TEntity Map(TModel request)
         {
             return Map<TEntity>(request);
         }
@@ -85,9 +85,9 @@ namespace DocKick.Services
             return Map<TModel>(entity);
         }
 
-        protected TEntity Map(TRequest request, TEntity entity)
+        protected TEntity Map(TModel request, TEntity entity)
         {
-            return Map<TRequest, TEntity>(request, entity);
+            return Map<TModel, TEntity>(request, entity);
         }
 
         protected TDestination Map<TDestination>(object source)

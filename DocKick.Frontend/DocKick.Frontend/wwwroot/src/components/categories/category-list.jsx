@@ -35,7 +35,7 @@ export class CategoryList extends Component {
     renderTableBody() {
         return (!this.state.data.length
             ? <tr>
-                <td colSpan={ 1 }>Nothing found</td>
+                <td colSpan={ 2 }>Nothing found</td>
             </tr>
             : this.state.data.map(item => (
                 <tr>
@@ -68,7 +68,7 @@ export class CategoryList extends Component {
                     <tbody>
                     { this.state.data === null
                         ? <tr>
-                            <td colSpan={ 1 }>Nothing found</td>
+                            <td colSpan={ 2 }>Nothing found</td>
                         </tr>
                         : this.renderTableBody() }
                     </tbody>

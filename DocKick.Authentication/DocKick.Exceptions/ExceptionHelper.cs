@@ -1,11 +1,28 @@
 ﻿using System;
 using DocKick.Helpers.Extensions;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DocKick.Exceptions
 {
     public static class ExceptionHelper
     {
+        public static void ThrowIfEmpty<TException>(object value)
+            where TException : Exception, new()
+        {
+            if (value.IsEmpty())
+            {
+                throw new TException();
+            }
+        }
+        
+        public static void ThrowIfNotEmpty<TException>(object value)
+            where TException : Exception, new()
+        {
+            if (!value.IsEmpty())
+            {
+                throw new TException();
+            }
+        }
+        
         public static void ThrowArgumentNullIfEmpty(object value, string paramName)
         {
             if (value.IsEmpty())
@@ -13,20 +30,21 @@ namespace DocKick.Exceptions
                 throw new ArgumentNullException(paramName);
             }
         }
-
-        public static void ThrowArgumentNullIfEmpty(params (object value, string paramName)[] parameters)
-        {
-            foreach (var (value, paramName) in parameters)
-            {
-                ThrowArgumentNullIfEmpty(value, paramName);
-            }
-        }
-
+        
         public static void ThrowParameterNullIfEmpty(object value, string message)
         {
             if (value.IsEmpty())
             {
                 throw new ParameterNullException(message);
+            }
+        }
+
+        public static void ThrowIfTrue<TException>(bool condition)
+            where TException : Exception, new()
+        {
+            if (condition)
+            {
+                throw new TException();
             }
         }
 

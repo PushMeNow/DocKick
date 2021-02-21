@@ -12,6 +12,7 @@ namespace DocKick.Data.Extensions
         {
             services.AddDbContext<CategorizableDbContext>(config =>
                                                           {
+                                                              config.UseLazyLoadingProxies();
                                                               config.UseSqlServer(connectionString,
                                                                                   q =>
                                                                                   {

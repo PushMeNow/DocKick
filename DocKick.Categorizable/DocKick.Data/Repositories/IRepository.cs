@@ -18,5 +18,7 @@ namespace DocKick.Data.Repositories
         Task Delete<T>(T id) where T : struct;
 
         Task Save();
+
+        IQueryable<TEntity> GetAllWithTracking();
     }
 }

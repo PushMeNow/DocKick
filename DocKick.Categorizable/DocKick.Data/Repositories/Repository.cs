@@ -25,6 +25,15 @@ namespace DocKick.Data.Repositories
         {
             return Set.AsNoTracking();
         }
+        
+        /// <summary>
+        /// Method for lazy loading props
+        /// </summary>
+        /// <returns></returns>
+        public IQueryable<TEntity> GetAllWithTracking()
+        {
+            return Set;
+        }
 
         public async Task<TEntity> GetById<T>(T id)
             where T : struct

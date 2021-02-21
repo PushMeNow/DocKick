@@ -23,7 +23,12 @@ namespace DocKick.Data.Configurations
             builder.Property(q => q.Name)
                    .HasMaxLength(100);
 
-            builder.HasIndex(q => new { q.UserId, q.Name, q.ParentId })
+            builder.HasIndex(q => new
+                                  {
+                                      q.UserId,
+                                      q.Name,
+                                      q.ParentId
+                                  })
                    .IsUnique();
         }
     }

@@ -7,5 +7,7 @@ namespace DocKick.Services.Categories
     public interface ICategoryService : IDataService<CategoryModel, CategoryRequest, Guid>
     {
         Task<CategoryModel[]> GetCategoriesByUserId(Guid userId);
+
+        Task<CategoryModel[]> GetCategoryTreeByUserId(Guid userId);
     }
 }

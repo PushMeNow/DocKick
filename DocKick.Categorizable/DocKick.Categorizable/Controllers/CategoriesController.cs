@@ -20,6 +20,12 @@ namespace DocKick.Categorizable.Controllers
         {
             return await _categoryService.GetCategoriesByUserId(UserId);
         }
+        
+        [HttpGet("category-tree")]
+        public async Task<CategoryModel[]> GetCategoryTree()
+        {
+            return await _categoryService.GetCategoryTreeByUserId(UserId);
+        }
 
         [HttpPost]
         public async Task<CategoryModel> Create([FromBody] CategoryRequest request)
@@ -29,7 +35,7 @@ namespace DocKick.Categorizable.Controllers
             return await _categoryService.Create(request);
         }
 
-        [HttpPut("categoryId:Guid")]
+        [HttpPut("{categoryId:Guid}")]
         public async Task<CategoryModel> Update([FromRoute] Guid categoryId, [FromBody] CategoryRequest request)
         {
             CheckValidation();

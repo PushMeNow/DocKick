@@ -14,7 +14,7 @@ namespace DocKick.Categorizable.Tests.Services
             using var fixture = new CategoryServiceFixture();
             var service = fixture.CreateService();
 
-            var request = new CategoryRequest
+            var request = new CategoryModel
                           {
                               UserId = fixture.TestBlobUserId,
                               Name = "Test Category"
@@ -33,7 +33,7 @@ namespace DocKick.Categorizable.Tests.Services
             using var fixture = new CategoryServiceFixture();
             var service = fixture.CreateService();
 
-            var request = new CategoryRequest
+            var request = new CategoryModel
                           {
                               UserId = fixture.TestBlobUserId,
                               Name = "Updated category"
@@ -54,7 +54,7 @@ namespace DocKick.Categorizable.Tests.Services
             using var fixture = new CategoryServiceFixture();
             var service = fixture.CreateService();
 
-            var request = new CategoryRequest
+            var request = new CategoryModel
                           {
                               Name = "Test",
                               UserId = fixture.TestBlobUserId,

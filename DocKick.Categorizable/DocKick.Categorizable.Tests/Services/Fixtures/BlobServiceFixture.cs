@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Azure.Storage.Blobs;
+using DocKick.Categorizable.Tests.Helpers;
 using DocKick.Data.Repositories;
 using DocKick.Entities.Blobs;
 using DocKick.Entities.Categories;
@@ -30,7 +31,7 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
             
             var blobRepository = new BlobRepository(Context);
 
-            return new BlobService(blobClientService, blobRepository);
+            return new BlobService(blobClientService, blobRepository, MapperHelper.Instance);
         }
 
         public static Stream GetTestPicture()

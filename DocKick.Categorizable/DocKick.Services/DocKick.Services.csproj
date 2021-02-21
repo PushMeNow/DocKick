@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DocKick.Data\DocKick.Data.csproj" />
+      <ProjectReference Include="..\DocKick.Exceptions\DocKick.Exceptions.csproj" />
       <ProjectReference Include="..\DocKick.Mapper\DocKick.Mapper.csproj" />
     </ItemGroup>
 

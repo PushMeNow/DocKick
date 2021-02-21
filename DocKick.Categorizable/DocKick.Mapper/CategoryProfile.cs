@@ -12,13 +12,13 @@ namespace DocKick.Mapper
         public CategoryProfile()
         {
             CreateMap<Category, CategoryModel>()
-                .ForMember(q => q.Children, q => q.MapFrom(w => w.Children.ToList()))
+                .ForMember(q => q.Children, q => q.MapFrom(w => w.Children.ToArray()))
                 .ReverseMap()
-                .ForMember(q => q.CategoryId, q => q.Ignore());
+                .ForMember(q => q.CategoryId, q => q.Ignore())
+                .ForMember(q => q.Children, q => q.Ignore());
 
-            CreateMap<Category, CategoryRequest>()
-                .ReverseMap()
-                .ForMember(q => q.CategoryId, q => q.Ignore());
+            CreateMap<CategoryRequest, CategoryModel>()
+                .ReverseMap();
         }
 
         public static ICollection<Category> LoadCategoryChildren(ICollection<Category> categories)

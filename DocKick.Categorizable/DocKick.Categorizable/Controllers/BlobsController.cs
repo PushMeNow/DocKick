@@ -29,7 +29,7 @@ namespace DocKick.Categorizable.Controllers
             }
         }
 
-        [HttpDelete("{blobId:Guid")]
+        [HttpDelete("{blobId:Guid}")]
         public async Task DeleteBlob(Guid blobId)
         {
             await _blobService.FullDelete(blobId);

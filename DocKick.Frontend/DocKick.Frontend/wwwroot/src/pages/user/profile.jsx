@@ -3,7 +3,6 @@ import axios from "axios";
 import { combineIdentityServerUrl } from "../../url-helper";
 import { Button, Form, FormControl } from "react-bootstrap";
 import { toast } from "react-toastify";
-import { LoaderContext } from "../../context/loader-context";
 
 class Profile extends Component {
     constructor(props) {
@@ -24,20 +23,13 @@ class Profile extends Component {
     }
 
     componentDidMount() {
-        const { showLoader, hideLoader } = this.context;
-
-        axios.get(combineIdentityServerUrl('account/profile'), {
-            before: showLoader
-        })
+        axios.get(combineIdentityServerUrl('account/profile'))
              .then(response => {
                  this.setState({ ...response.data, disabled: false });
-             })
-             .finally(hideLoader);
+             });
     }
 
     render() {
-        const { showLoader, hideLoader } = this.context;
-
         const updateProfile = () => {
             let {
                 firstName,
@@ -57,23 +49,14 @@ class Profile extends Component {
                 country,
                 city,
                 phone
-            }, {
-                          before: showLoader
-                      }).then(response => {
+            }).then(response => {
                 this.setState({ ...response.data, disabled: false });
 
                 toast('Profile was saved successfully.', {
                     type: 'success'
                 });
-            }).finally(hideLoader);
+            });
         };
-
-        // const checkCategorizable = () => {
-        //     axios.get(combineCategorizableUrl('category/api'))
-        //          .then(response => {
-        //              alert(response.data);
-        //          });
-        // }
 
         const onChange = () => (target) => {
             this.setState({ [target.name]: target.value });
@@ -143,7 +126,5 @@ class Profile extends Component {
         )
     }
 }
-
-Profile.contextType = LoaderContext;
 
 export default Profile;

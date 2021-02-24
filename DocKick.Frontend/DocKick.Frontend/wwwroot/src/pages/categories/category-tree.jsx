@@ -1,7 +1,6 @@
 ﻿import React, { Component } from "react";
 import axios from "axios";
 import { combineCategorizableUrl } from "../../url-helper";
-import { LoaderContext } from "../../context/loader-context";
 import SortableTree from "react-sortable-tree";
 import 'react-sortable-tree/style.css';
 
@@ -22,8 +21,6 @@ export class CategoryTree extends Component {
     }
 
     fillData() {
-        const loaderContext = this.context;
-
         const parseCategory = (category) => {
             let result = {
                 title: category.name,
@@ -41,28 +38,23 @@ export class CategoryTree extends Component {
             return result;
         }
 
-        axios.get(combineCategorizableUrl('categories/category-tree'), {
-            before: loaderContext.showLoader,
-        }).then(response => {
-            const treeData = [];
-            const categories = response.data;
+        axios.get(combineCategorizableUrl('categories/category-tree'))
+             .then(response => {
+                 const treeData = [];
+                 const categories = response.data;
 
-            for (let category of categories) {
-                treeData.push(parseCategory(category));
-            }
+                 for (let category of categories) {
+                     treeData.push(parseCategory(category));
+                 }
 
-            this.setState({ treeData });
-        }).finally(loaderContext.hideLoader);
+                 this.setState({ treeData });
+             });
     }
 
     changeNodeData(newNodeData) {
-        const loaderContext = this.context;
-
         axios.put(combineCategorizableUrl(`categories/${ newNodeData.categoryId }`), {
             ...newNodeData
-        }, {
-                      before: loaderContext.showLoader
-                  }).finally(loaderContext.hideLoader);
+        });
     }
 
     render() {
@@ -84,5 +76,3 @@ export class CategoryTree extends Component {
         );
     }
 }
-
-CategoryTree.contextType = LoaderContext;

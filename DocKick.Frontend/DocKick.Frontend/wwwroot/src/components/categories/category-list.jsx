@@ -1,7 +1,6 @@
 ﻿import React, { Component } from "react";
 import axios from "axios";
 import { combineCategorizableUrl } from "../../url-helper";
-import { LoaderContext } from "../../context/loader-context";
 import { Button, Table } from "react-bootstrap";
 import CategoryModalForm from "./category-modal-form";
 import { toast } from "react-toastify";
@@ -35,13 +34,10 @@ export class CategoryList extends Component {
     }
 
     loadData() {
-        let loaderContext = this.context;
-
-        axios.get(combineCategorizableUrl('categories'), {
-            before: loaderContext.showLoader,
-        }).then(response => {
-            this.setState({ data: response.data });
-        }).finally(loaderContext.hideLoader);
+        axios.get(combineCategorizableUrl('categories'))
+             .then(response => {
+                 this.setState({ data: response.data });
+             });
     }
 
     renderTableBody() {
@@ -58,14 +54,10 @@ export class CategoryList extends Component {
                         return;
                     }
 
-                    const loaderContext = this.context;
-
-                    axios.delete(combineCategorizableUrl(`categories/${ category.categoryId }`), {
-                        before: loaderContext.showLoader
-                    }).then(() => {
-                        toast(`Category ${ category.name } was deleted successfully.`, { type: "success" });
-                    }).finally(() => {
-                        loaderContext.hideLoader();
+                    axios.delete(combineCategorizableUrl(`categories/${ category.categoryId }`))
+                         .then(() => {
+                             toast(`Category ${ category.name } was deleted successfully.`, { type: "success" });
+                         }).finally(() => {
                         this.loadData();
                     });
                 }
@@ -123,5 +115,3 @@ export class CategoryList extends Component {
         )
     }
 }
-
-CategoryList.contextType = LoaderContext;

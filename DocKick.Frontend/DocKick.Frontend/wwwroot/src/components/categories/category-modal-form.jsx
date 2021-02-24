@@ -3,7 +3,6 @@ import { Button, FormControl, FormLabel, Modal, ModalBody, ModalTitle } from "re
 import ModalHeader from "react-bootstrap/ModalHeader";
 import axios from "axios";
 import { combineCategorizableUrl } from "../../url-helper";
-import { LoaderContext } from "../../context/loader-context";
 import { toast } from "react-toastify";
 
 export default class CategoryModalForm extends Component {
@@ -38,7 +37,7 @@ export default class CategoryModalForm extends Component {
 
             return;
         }
-        
+
         let { categoryId, name, parentId } = category;
 
         this.setEditAction();
@@ -66,12 +65,10 @@ export default class CategoryModalForm extends Component {
 
         const saveCategory = () => {
             const { updateTable } = this.props;
-            const loaderContext = this.context
             let category = this.getCategoryData(),
                 isAdd = this.state.action === 'add';
 
             axios({
-                      before: loaderContext.showLoader,
                       method: (isAdd ? 'post' : 'put'),
                       data: { ...category },
                       url: combineCategorizableUrl('categories' + (isAdd ? '' : `/${ category.categoryId }`))
@@ -83,7 +80,6 @@ export default class CategoryModalForm extends Component {
                     });
                 })
                 .finally(() => {
-                    loaderContext.hideLoader();
                     updateTable();
                 });
         }
@@ -110,5 +106,3 @@ export default class CategoryModalForm extends Component {
         </Modal>
     }
 }
-
-CategoryModalForm.contextType = LoaderContext;

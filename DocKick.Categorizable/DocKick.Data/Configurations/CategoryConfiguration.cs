@@ -21,6 +21,7 @@ namespace DocKick.Data.Configurations
                    .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(q => q.Name)
+                   .IsRequired()
                    .HasMaxLength(100);
 
             builder.HasIndex(q => new

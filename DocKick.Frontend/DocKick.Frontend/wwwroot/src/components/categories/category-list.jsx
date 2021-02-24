@@ -30,7 +30,7 @@ export class CategoryList extends Component {
 
     renderNothingFound() {
         return <tr>
-            <td colSpan={ 2 }>Nothing found</td>
+            <td colSpan={ 3 }>Nothing found</td>
         </tr>
     }
 
@@ -75,6 +75,9 @@ export class CategoryList extends Component {
                         <td>
                             { category.name }
                         </td>
+                        <td>
+                            { category.parentName }
+                        </td>
                         <td align="center">
                             <Button variant="secondary"
                                     onClick={ showModal }>Edit</Button>
@@ -105,8 +108,9 @@ export class CategoryList extends Component {
                        hover>
                     <thead>
                     <tr>
-                        <td>Name</td>
-                        <td>Action</td>
+                        <th>Name</th>
+                        <th>Parent</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>

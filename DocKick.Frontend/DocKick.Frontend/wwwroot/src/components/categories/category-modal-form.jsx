@@ -38,9 +38,11 @@ export default class CategoryModalForm extends Component {
 
             return;
         }
+        
+        let { categoryId, name, parentId } = category;
 
         this.setEditAction();
-        this.setState({ ...category });
+        this.setState({ categoryId, name, parentId });
     }
 
     getDefaultCategory() {
@@ -85,7 +87,7 @@ export default class CategoryModalForm extends Component {
                     updateTable();
                 });
         }
-        
+
         return <Modal show={ this.state.show }
                       onHide={ this.hideModal }>
             <ModalHeader closeButton>
@@ -102,7 +104,8 @@ export default class CategoryModalForm extends Component {
             <Modal.Footer>
                 <Button variant="primary"
                         onClick={ saveCategory }>Save</Button>
-                <Button variant="secondary">Close</Button>
+                <Button variant="secondary"
+                        onClick={ this.hideModal }>Close</Button>
             </Modal.Footer>
         </Modal>
     }

@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using AutoMapper;
-using AutoMapper.Internal;
 using DocKick.Dtos.Categories;
 using DocKick.Entities.Categories;
 
@@ -13,27 +11,13 @@ namespace DocKick.Mapper
         {
             CreateMap<Category, CategoryModel>()
                 .ForMember(q => q.Children, q => q.MapFrom(w => w.Children.ToArray()))
+                .ForMember(q => q.ParentName, q => q.MapFrom(w => w.ParentId.HasValue ? w.Parent.Name : null))
                 .ReverseMap()
                 .ForMember(q => q.CategoryId, q => q.Ignore())
-                .ForMember(q => q.Children, q => q.Ignore());
+                .ForMember(q => q.Children, q => q.Ignore())
+                .ForMember(q => q.Parent, q => q.Ignore());
 
-            CreateMap<CategoryRequest, CategoryModel>()
-                .ReverseMap();
-        }
-
-        public static ICollection<Category> LoadCategoryChildren(ICollection<Category> categories)
-        {
-            categories.ForAll(q =>
-                              {
-                                  q.Children.ToList();
-
-                                  if (q.Children.Any())
-                                  {
-                                      LoadCategoryChildren(q.Children);
-                                  }
-                              });
-
-            return categories;
+            CreateMap<CategoryRequest, CategoryModel>();
         }
     }
 }

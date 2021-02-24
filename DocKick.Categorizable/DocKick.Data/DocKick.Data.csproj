@@ -5,7 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\DocKick.Authentication\DocKick.Exceptions\DocKick.Exceptions.csproj" />
       <ProjectReference Include="..\DocKick.Entities\DocKick.Entities.csproj" />
       <ProjectReference Include="..\DocKick.Exceptions\DocKick.Exceptions.csproj" />
     </ItemGroup>

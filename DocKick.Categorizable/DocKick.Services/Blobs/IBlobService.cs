@@ -9,8 +9,11 @@ namespace DocKick.Services.Blobs
     {
         Task<BlobUploadModel> Upload(Guid userId, Stream fileStream, string contentType = "application/jpeg");
 
+        [Obsolete("Planning to use GenerateBlobLink")]
         Task<BlobDownloadModel> Download(Guid blobId);
 
         Task<bool> FullDelete(Guid blobId);
+        
+        Task<BlobLinkModel> GenerateBlobLink(Guid blobId);
     }
 }

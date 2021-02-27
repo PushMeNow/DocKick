@@ -108,6 +108,8 @@ namespace DocKick.Authentication.Extensions
                                {
                                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
 
+                                   options.ClientId = authSettings.GoogleSettings.ClientId;
+                                   options.ClientSecret = authSettings.GoogleSettings.ClientSecret;
                                });
 
             services.AddAuthorization();

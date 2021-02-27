@@ -9,5 +9,7 @@ namespace DocKick.Services.Settings
         public Client[] Clients { get; set; }
 
         public string MetadataAddress { get; set; }
+
+        public GoogleSettings GoogleSettings { get; set; }
     }
 }

@@ -9,30 +9,59 @@ namespace DocKick.Categorizable.Tests.Services
 {
     public class BlobServiceTests
     {
+        // TODO: Need to mock whole blob azure service.
         [Fact]
-        public async Task Upload()
+        public async Task Upload_OK()
         {
+            // Arrange
             await using var fileStream = BlobServiceFixture.GetTestPicture();
             using var fixture = new BlobServiceFixture();
             var blobService = fixture.CreateService();
 
+            // Act
             var response = await blobService.Upload(fixture.TestBlobUserId, fileStream);
 
+            //Assert
             Assert.NotNull(response);
             Assert.True(await fixture.Context.Blobs.AnyAsync(q => q.UserId == fixture.TestBlobUserId));
         }
 
         [Fact]
-        public async Task Download()
+        public async Task Download_OK()
         {
+            // Arrange 
             using var fixture = new BlobServiceFixture();
             var service = fixture.CreateService();
+            
+            // Act
             var model = await service.Download(fixture.BlobId);
 
+            // Assert
             using var info = model.BlobDownloadInfo;
             
             Assert.NotNull(model.BlobDownloadInfo);
-            Assert.NotEmpty(model.BlobName);
+            Assert.NotEmpty(model.Name);
+        }
+
+        [Fact]
+        public async Task GenerateBlobLink_OK()
+        {
+            // Arrange
+            using var fixture = new BlobServiceFixture();
+            var service = fixture.CreateService();
+            
+            // Act
+            var result = await service.GenerateBlobLink(fixture.BlobId);
+            
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotEmpty(result.Url);
+            
+            var blobLink = await fixture.Context.BlobLinks.FirstOrDefaultAsync(q => q.BlobId == fixture.BlobId);
+            
+            Assert.NotNull(blobLink);
+            Assert.Equal(blobLink.ExpirationDate, result.ExpirationDate);
+            Assert.Equal(blobLink.Url, result.Url);
         }
     }
 }

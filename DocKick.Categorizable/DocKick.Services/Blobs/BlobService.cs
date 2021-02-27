@@ -2,15 +2,15 @@
 using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
-using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
+using Azure.Storage.Sas;
 using DocKick.Data.Repositories;
 using DocKick.Dtos.Blobs;
-using DocKick.Dtos.Categories;
 using DocKick.Entities.Blobs;
-using DocKick.Entities.Categories;
 using DocKick.Exceptions;
+using DocKick.Helpers.Extensions;
 
 namespace DocKick.Services.Blobs
 {
@@ -40,9 +40,9 @@ namespace DocKick.Services.Blobs
 
             ExceptionHelper.ThrowNotFoundIfEmpty(response, "Blob");
 
-            var createModel = new BlobModel()
+            var createModel = new BlobModel
                               {
-                                  BlobName = blobName,
+                                  Name = blobName,
                                   UserId = userId
                               };
 
@@ -55,7 +55,7 @@ namespace DocKick.Services.Blobs
             return model;
         }
 
-        // TODO: Need to figure out how to init blob link in Azure Storage.
+        [Obsolete("Planning to use GenerateBlobLink")]
         public async Task<BlobDownloadModel> Download(Guid blobId)
         {
             var blob = await Repository.GetById(blobId);
@@ -70,7 +70,7 @@ namespace DocKick.Services.Blobs
             var model = new BlobDownloadModel
                         {
                             BlobId = blob.BlobId,
-                            BlobName = blob.Name,
+                            Name = blob.Name,
                             CategoryId = blob.CategoryId,
                             BlobDownloadInfo = response.Value
                         };
@@ -99,6 +99,43 @@ namespace DocKick.Services.Blobs
             return response.Value;
         }
 
+        public async Task<BlobLinkModel> GenerateBlobLink(Guid blobId)
+        {
+            var blob = await Repository.GetById(blobId);
+
+            if (blob.BlobLink is not null
+                && !blob.BlobLink.Url.IsEmpty()
+                && blob.BlobLink.ExpirationDate < DateTimeOffset.Now)
+            {
+                return new BlobLinkModel
+                       {
+                           Blob = Map<BlobModel>(blob),
+                           Url = blob.BlobLink.Url,
+                           ExpirationDate = blob.BlobLink.ExpirationDate
+                       };
+            }
+
+            ExceptionHelper.ThrowNotFoundIfEmpty(blob, "Blob");
+
+            var (blobUrl, expirationDate) = GetBlobUrl(blob.UserId, blob.Name);
+
+            blob.BlobLink ??= new BlobLink();
+            blob.BlobLink.ExpirationDate = expirationDate;
+            blob.BlobLink.Url = blobUrl;
+
+            Repository.Update(blob);
+            await Repository.Save();
+
+            var result = new BlobLinkModel
+                         {
+                             Blob = Map<BlobModel>(blob),
+                             Url = blob.BlobLink.Url,
+                             ExpirationDate = blob.BlobLink.ExpirationDate
+                         };
+
+            return result;
+        }
+
         private static string GetFullBlobName(Guid userId, string blobName)
         {
             return $"{userId}/{blobName}";
@@ -109,6 +146,23 @@ namespace DocKick.Services.Blobs
             ExceptionHelper.ThrowArgumentNullIfEmpty((userId, nameof(userId)), (blobName, nameof(blobName)));
 
             return _blobContainer.GetBlobClient(GetFullBlobName(userId, blobName));
+        }
+
+        private (string uri, DateTimeOffset expirationDate) GetBlobUrl(Guid userId, string blobName)
+        {
+            var client = GetBlobClient(userId, blobName);
+            var expirationDate = DateTimeOffset.Now.AddHours(1);
+            var builder = new BlobSasBuilder(BlobSasPermissions.Read, expirationDate)
+                          {
+                              BlobContainerName = client.GetParentBlobContainerClient()
+                                                        .Name,
+                              Resource = "b",
+                              BlobName = client.Name
+                          };
+
+            var blobUri = client.GenerateSasUri(builder);
+
+            return (blobUri.ToString(), expirationDate);
         }
     }
 }

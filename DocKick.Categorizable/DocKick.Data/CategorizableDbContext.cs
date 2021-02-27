@@ -11,6 +11,7 @@ namespace DocKick.Data
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Blob> Blobs { get; set; }
+        public DbSet<BlobLink> BlobLinks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

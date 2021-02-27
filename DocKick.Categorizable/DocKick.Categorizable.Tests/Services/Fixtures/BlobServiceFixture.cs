@@ -54,6 +54,7 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
                                        {
                                            Name = TestBlobName,
                                            CategoryId = CategoryId,
+                                           UserId = TestBlobUserId
                                        })
                             .Entity.BlobId;
         }

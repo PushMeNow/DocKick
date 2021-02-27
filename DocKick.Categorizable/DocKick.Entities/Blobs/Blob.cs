@@ -11,5 +11,6 @@ namespace DocKick.Entities.Blobs
         public string Name { get; set; }
 
         public virtual Category Category { get; set; }
+        public virtual BlobLink BlobLink { get; set; }
     }
 }

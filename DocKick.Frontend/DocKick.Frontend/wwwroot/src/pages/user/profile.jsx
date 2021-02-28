@@ -2,7 +2,7 @@
 import axios from "axios";
 import { combineIdentityServerUrl } from "../../url-helper";
 import { Button, Form, FormControl } from "react-bootstrap";
-import { toast } from "react-toastify";
+import { toastSuccess } from "../../helpers/toast-helpers";
 
 class Profile extends Component {
     constructor(props) {
@@ -18,8 +18,6 @@ class Profile extends Component {
             phone: '',
             disabled: true
         }
-
-        this.submitBtn = React.createRef();
     }
 
     componentDidMount() {
@@ -52,14 +50,12 @@ class Profile extends Component {
             }).then(response => {
                 this.setState({ ...response.data, disabled: false });
 
-                toast('Profile was saved successfully.', {
-                    type: 'success'
-                });
+                toastSuccess('Profile was saved successfully.');
             });
         };
 
-        const onChange = () => (target) => {
-            this.setState({ [target.name]: target.value });
+        const onChange = (e) => {
+            this.setState({ [e.target.name]: e.target.value });
         }
 
         return (
@@ -119,8 +115,7 @@ class Profile extends Component {
                                  name="phone"
                                  onChange={ onChange } />
                 </Form.Group>
-                <Button ref={ this.submitBtn }
-                        onClick={ updateProfile }
+                <Button onClick={ updateProfile }
                         disabled={ this.state.disabled }>Save</Button>
             </Form>
         )

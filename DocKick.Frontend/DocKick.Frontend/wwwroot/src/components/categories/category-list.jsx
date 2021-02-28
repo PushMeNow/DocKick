@@ -3,7 +3,7 @@ import axios from "axios";
 import { combineCategorizableUrl } from "../../url-helper";
 import { Button, Table } from "react-bootstrap";
 import CategoryModalForm from "./category-modal-form";
-import { toast } from "react-toastify";
+import { toastSuccess } from "../../helpers/toast-helpers";
 
 export class CategoryList extends Component {
     constructor(props) {
@@ -56,7 +56,7 @@ export class CategoryList extends Component {
 
                     axios.delete(combineCategorizableUrl(`categories/${ category.categoryId }`))
                          .then(() => {
-                             toast(`Category ${ category.name } was deleted successfully.`, { type: "success" });
+                             toastSuccess(`Category ${ category.name } was deleted successfully.`);
                          }).finally(() => {
                         this.loadData();
                     });

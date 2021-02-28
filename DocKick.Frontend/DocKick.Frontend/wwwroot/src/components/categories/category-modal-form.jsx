@@ -3,7 +3,7 @@ import { Button, FormControl, FormLabel, Modal, ModalBody, ModalTitle } from "re
 import ModalHeader from "react-bootstrap/ModalHeader";
 import axios from "axios";
 import { combineCategorizableUrl } from "../../url-helper";
-import { toast } from "react-toastify";
+import { toastSuccess } from "../../helpers/toast-helpers";
 
 export default class CategoryModalForm extends Component {
     constructor(props) {
@@ -53,9 +53,13 @@ export default class CategoryModalForm extends Component {
     }
 
     getCategoryData() {
-        let { show, action, ...category } = this.state;
+        let { categoryId, parentId, name } = this.state;
 
-        return category;
+        return {
+            categoryId,
+            parentId,
+            name
+        };
     }
 
     render() {
@@ -75,9 +79,7 @@ export default class CategoryModalForm extends Component {
                   })
                 .then(response => {
                     this.hideModal();
-                    toast(`Category '${ response.data.name }' was saved successfully.`, {
-                        type: "success"
-                    });
+                    toastSuccess(`Category '${ response.data.name }' was saved successfully.`);
                 })
                 .finally(() => {
                     updateTable();

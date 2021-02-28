@@ -5,6 +5,7 @@ import { LogoutCallback } from "../../components/auth/logout-callback";
 import Profile from "../../pages/user/profile";
 import { CategoryPage } from "../../pages/categories/category";
 import { CategoryTree } from "../../pages/categories/category-tree";
+import FilesPage from "../../pages/categories/files";
 
 const PublicLayout = () => {
     return (
@@ -19,6 +20,8 @@ const PublicLayout = () => {
                    component={ CategoryPage } />
             <Route path="/category-tree"
                    component={ CategoryTree } />
+            <Route path="/files"
+                   component={ FilesPage } />
         </Switch>
     )
 }

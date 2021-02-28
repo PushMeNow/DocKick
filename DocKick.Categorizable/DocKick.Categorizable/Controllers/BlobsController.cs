@@ -18,15 +18,18 @@ namespace DocKick.Categorizable.Controllers
             _blobService = blobService;
         }
 
-        [HttpPost]
-        public async IAsyncEnumerable<BlobUploadModel> UploadBlob(IFormFileCollection files)
+        [HttpGet]
+        public async Task<IReadOnlyCollection<BlobModel>> GetBlobsByUserId()
         {
-            foreach (var file in files)
-            {
-                await using var stream = file.OpenReadStream();
+            return await _blobService.GetBlobsByUserId(UserId);
+        }
 
-                yield return await _blobService.Upload(UserId, stream, file.ContentType);
-            }
+        [HttpPost("upload")]
+        public async Task<BlobUploadModel> UploadBlob(IFormFile formFile)
+        {
+            await using var stream = formFile.OpenReadStream();
+
+            return await _blobService.Upload(UserId, stream, formFile.ContentType);
         }
 
         [HttpDelete("{blobId:Guid}")]

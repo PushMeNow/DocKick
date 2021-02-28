@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Azure.Storage.Blobs;
@@ -11,18 +13,37 @@ using DocKick.Dtos.Blobs;
 using DocKick.Entities.Blobs;
 using DocKick.Exceptions;
 using DocKick.Helpers.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace DocKick.Services.Blobs
 {
     public class BlobService : BaseDataService<IRepository<Blob>, Blob, BlobModel, Guid>, IBlobService
     {
         private const string BlobContainerName = "dockickcontainer";
+        private const int BlobExpirationTime = 8;
 
         private readonly BlobContainerClient _blobContainer;
 
         public BlobService(BlobServiceClient blobServiceClient, IRepository<Blob> blobRepository, IMapper mapper) : base(blobRepository, mapper)
         {
             _blobContainer = blobServiceClient.GetBlobContainerClient(BlobContainerName);
+        }
+
+        public async Task<IReadOnlyCollection<BlobModel>> GetBlobsByUserId(Guid userId)
+        {
+            ExceptionHelper.ThrowArgumentNullIfEmpty(userId, nameof(userId));
+            
+            var blobs = await Repository.GetAll()
+                                        .Include(q => q.BlobLink)
+                                        .Where(q => q.UserId == userId)
+                                        .ToArrayAsync();
+
+            foreach (var blob in blobs.Where(blob => !IsValidBlobLink(blob)))
+            {
+                await GenerateBlobLinkAndSave(blob);
+            }
+
+            return Map<BlobModel[]>(blobs);
         }
 
         public async Task<BlobUploadModel> Upload(Guid userId, Stream fileStream, string contentType = "application/jpeg")
@@ -46,13 +67,15 @@ namespace DocKick.Services.Blobs
                                   UserId = userId
                               };
 
-            var model = new BlobUploadModel
-                        {
-                            Blob = await Create(createModel),
-                            BlobContentInfo = response.Value
-                        };
+            var createdBlob = await Create(createModel);
 
-            return model;
+            var result = new BlobUploadModel
+                         {
+                             Blob = createdBlob,
+                             BlobContentInfo = response.Value
+                         };
+
+            return result;
         }
 
         [Obsolete("Planning to use GenerateBlobLink")]
@@ -99,41 +122,22 @@ namespace DocKick.Services.Blobs
             return response.Value;
         }
 
-        public async Task<BlobLinkModel> GenerateBlobLink(Guid blobId)
+        public async Task<BlobModel> GenerateBlobLink(Guid blobId)
         {
+            ExceptionHelper.ThrowArgumentNullIfEmpty(blobId, nameof(blobId));
+            
             var blob = await Repository.GetById(blobId);
-
-            if (blob.BlobLink is not null
-                && !blob.BlobLink.Url.IsEmpty()
-                && blob.BlobLink.ExpirationDate < DateTimeOffset.Now)
-            {
-                return new BlobLinkModel
-                       {
-                           Blob = Map<BlobModel>(blob),
-                           Url = blob.BlobLink.Url,
-                           ExpirationDate = blob.BlobLink.ExpirationDate
-                       };
-            }
 
             ExceptionHelper.ThrowNotFoundIfEmpty(blob, "Blob");
 
-            var (blobUrl, expirationDate) = GetBlobUrl(blob.UserId, blob.Name);
+            if (IsValidBlobLink(blob))
+            {
+                return Map<BlobModel>(blob);
+            }
 
-            blob.BlobLink ??= new BlobLink();
-            blob.BlobLink.ExpirationDate = expirationDate;
-            blob.BlobLink.Url = blobUrl;
+            blob = await GenerateBlobLinkAndSave(blob);
 
-            Repository.Update(blob);
-            await Repository.Save();
-
-            var result = new BlobLinkModel
-                         {
-                             Blob = Map<BlobModel>(blob),
-                             Url = blob.BlobLink.Url,
-                             ExpirationDate = blob.BlobLink.ExpirationDate
-                         };
-
-            return result;
+            return Map<BlobModel>(blob);
         }
 
         private static string GetFullBlobName(Guid userId, string blobName)
@@ -151,7 +155,7 @@ namespace DocKick.Services.Blobs
         private (string uri, DateTimeOffset expirationDate) GetBlobUrl(Guid userId, string blobName)
         {
             var client = GetBlobClient(userId, blobName);
-            var expirationDate = DateTimeOffset.Now.AddHours(1);
+            var expirationDate = DateTimeOffset.Now.AddHours(BlobExpirationTime);
             var builder = new BlobSasBuilder(BlobSasPermissions.Read, expirationDate)
                           {
                               BlobContainerName = client.GetParentBlobContainerClient()
@@ -163,6 +167,24 @@ namespace DocKick.Services.Blobs
             var blobUri = client.GenerateSasUri(builder);
 
             return (blobUri.ToString(), expirationDate);
+        }
+
+        private async Task<Blob> GenerateBlobLinkAndSave(Blob blob)
+        {
+            var (blobUrl, expirationDate) = GetBlobUrl(blob.UserId, blob.Name);
+
+            blob.BlobLink ??= new BlobLink();
+            blob.BlobLink.ExpirationDate = expirationDate;
+            blob.BlobLink.Url = blobUrl;
+
+            await Repository.Save();
+
+            return blob;
+        }
+
+        private static bool IsValidBlobLink(Blob blob)
+        {
+            return blob.BlobLink is not null && !blob.BlobLink.Url.IsEmpty() && blob.BlobLink.ExpirationDate < DateTimeOffset.Now;
         }
     }
 }

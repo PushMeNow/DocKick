@@ -9,6 +9,11 @@ namespace DocKick.Mapper
         public BlobProfile()
         {
             CreateMap<Blob, BlobModel>();
+            CreateMap<BlobModel, Blob>()
+                .ForMember(q => q.BlobId, q => q.Ignore())
+                .ForMember(q => q.BlobLink, q => q.Ignore());
+
+            CreateMap<BlobLink, BlobLinkModel>();
         }
     }
 }

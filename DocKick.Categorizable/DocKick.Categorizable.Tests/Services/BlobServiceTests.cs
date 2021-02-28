@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DocKick.Categorizable.Tests.Services.Fixtures;
@@ -32,13 +33,13 @@ namespace DocKick.Categorizable.Tests.Services
             // Arrange 
             using var fixture = new BlobServiceFixture();
             var service = fixture.CreateService();
-            
+
             // Act
             var model = await service.Download(fixture.BlobId);
 
             // Assert
             using var info = model.BlobDownloadInfo;
-            
+
             Assert.NotNull(model.BlobDownloadInfo);
             Assert.NotEmpty(model.Name);
         }
@@ -49,19 +50,42 @@ namespace DocKick.Categorizable.Tests.Services
             // Arrange
             using var fixture = new BlobServiceFixture();
             var service = fixture.CreateService();
-            
+
             // Act
             var result = await service.GenerateBlobLink(fixture.BlobId);
-            
+
             // Assert
             Assert.NotNull(result);
-            Assert.NotEmpty(result.Url);
-            
+            Assert.NotEmpty(result.BlobLink.Url);
+
             var blobLink = await fixture.Context.BlobLinks.FirstOrDefaultAsync(q => q.BlobId == fixture.BlobId);
-            
+
             Assert.NotNull(blobLink);
-            Assert.Equal(blobLink.ExpirationDate, result.ExpirationDate);
-            Assert.Equal(blobLink.Url, result.Url);
+            Assert.Equal(blobLink.ExpirationDate, result.BlobLink.ExpirationDate);
+            Assert.Equal(blobLink.Url, result.BlobLink.Url);
+        }
+
+        [Fact]
+        public async Task GetBlobsByUserId_OK()
+        {
+            // Arrange
+            using var fixture = new BlobServiceFixture();
+            var service = fixture.CreateService();
+
+            // Act
+            var result = await service.GetBlobsByUserId(fixture.TestBlobUserId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+
+            Assert.All(result,
+                       q =>
+                       {
+                           Assert.NotNull(q.BlobLink);
+                           Assert.NotEmpty(q.BlobLink.Url);
+                           Assert.NotEqual(DateTimeOffset.MinValue, q.BlobLink.ExpirationDate);
+                       });
         }
     }
 }

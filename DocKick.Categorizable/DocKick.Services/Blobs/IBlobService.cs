@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using DocKick.Dtos.Blobs;
@@ -14,6 +15,8 @@ namespace DocKick.Services.Blobs
 
         Task<bool> FullDelete(Guid blobId);
         
-        Task<BlobLinkModel> GenerateBlobLink(Guid blobId);
+        Task<BlobModel> GenerateBlobLink(Guid blobId);
+        
+        Task<IReadOnlyCollection<BlobModel>> GetBlobsByUserId(Guid userId);
     }
 }

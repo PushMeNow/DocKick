@@ -6,15 +6,13 @@ using DocKick.Dtos.Blobs;
 
 namespace DocKick.Services.Blobs
 {
-    public interface IBlobService
+    public interface IBlobService : IDataService<BlobModel, Guid>
     {
-        Task<BlobUploadModel> Upload(Guid userId, Stream fileStream, string contentType = "application/jpeg");
+        Task<BlobUploadModel> Upload(Guid userId, string fileName, Stream fileStream, string contentType = "application/jpeg");
 
         [Obsolete("Planning to use GenerateBlobLink")]
         Task<BlobDownloadModel> Download(Guid blobId);
 
-        Task<bool> FullDelete(Guid blobId);
-        
         Task<BlobModel> GenerateBlobLink(Guid blobId);
         
         Task<IReadOnlyCollection<BlobModel>> GetBlobsByUserId(Guid userId);

@@ -32,7 +32,7 @@ namespace DocKick.Services.Blobs
         public async Task<IReadOnlyCollection<BlobModel>> GetBlobsByUserId(Guid userId)
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(userId, nameof(userId));
-            
+
             var blobs = await Repository.GetAll()
                                         .Include(q => q.BlobLink)
                                         .Where(q => q.UserId == userId)
@@ -46,12 +46,17 @@ namespace DocKick.Services.Blobs
             return Map<BlobModel[]>(blobs);
         }
 
-        public async Task<BlobUploadModel> Upload(Guid userId, Stream fileStream, string contentType = "application/jpeg")
+        public async Task<BlobUploadModel> Upload(Guid userId, string fileName, Stream fileStream, string contentType = "application/jpeg")
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(userId, nameof(userId));
 
-            var blobName = $"{Guid.NewGuid()}.jpg";
+            var blobName = fileName.IsEmpty() ? $"{Guid.NewGuid()}.jpg" : fileName;
+
+            await CheckFileName(blobName, userId);
+
             var blobClient = GetBlobClient(userId, blobName);
+
+            await CheckBlob(blobClient, blobName, userId);
 
             var response = await blobClient.UploadAsync(fileStream,
                                                         new BlobHttpHeaders
@@ -101,7 +106,7 @@ namespace DocKick.Services.Blobs
             return model;
         }
 
-        public async Task<bool> FullDelete(Guid blobId)
+        public override async Task<bool> Delete(Guid blobId)
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(blobId, nameof(blobId));
 
@@ -117,7 +122,7 @@ namespace DocKick.Services.Blobs
 
             ExceptionHelper.ThrowParameterNullIfEmpty(response, "Incorrect response of Azure Blobs.");
 
-            await Delete(blobId);
+            await base.Delete(blobId);
 
             return response.Value;
         }
@@ -125,7 +130,7 @@ namespace DocKick.Services.Blobs
         public async Task<BlobModel> GenerateBlobLink(Guid blobId)
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(blobId, nameof(blobId));
-            
+
             var blob = await Repository.GetById(blobId);
 
             ExceptionHelper.ThrowNotFoundIfEmpty(blob, "Blob");
@@ -185,6 +190,30 @@ namespace DocKick.Services.Blobs
         private static bool IsValidBlobLink(Blob blob)
         {
             return blob.BlobLink is not null && !blob.BlobLink.Url.IsEmpty() && blob.BlobLink.ExpirationDate < DateTimeOffset.Now;
+        }
+
+        private async Task CheckFileName(string fileName, Guid userId)
+        {
+            var isValidFileName = await Repository.GetAll()
+                                                  .AnyAsync(q => q.Name == fileName && q.UserId == userId);
+
+            ExceptionHelper.ThrowParameterInvalidIfTrue(isValidFileName, "The user already has the same file.");
+        }
+
+        private async Task CheckBlob(BlobBaseClient blobClient, string blobName, Guid userId)
+        {
+            if (await blobClient.ExistsAsync())
+            {
+                // if system come here it means we have blob in azure but not in DB
+                // so need to create record about thi blob in DB and throw exception.
+                await Create(new BlobModel
+                             {
+                                 Name = blobName,
+                                 UserId = userId
+                             });
+
+                throw new ParameterInvalidException("The user already has the same file.");
+            }
         }
     }
 }

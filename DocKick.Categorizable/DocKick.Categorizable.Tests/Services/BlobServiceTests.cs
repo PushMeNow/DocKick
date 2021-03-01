@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using DocKick.Categorizable.Tests.Services.Fixtures;
+using DocKick.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -20,11 +19,25 @@ namespace DocKick.Categorizable.Tests.Services
             var blobService = fixture.CreateService();
 
             // Act
-            var response = await blobService.Upload(fixture.TestBlobUserId, fileStream);
+            var response = await blobService.Upload(fixture.TestBlobUserId, null, fileStream);
 
             //Assert
             Assert.NotNull(response);
             Assert.True(await fixture.Context.Blobs.AnyAsync(q => q.UserId == fixture.TestBlobUserId));
+        }
+        
+        [Fact]
+        public async Task Upload_BlobExists_OK()
+        {
+            // Arrange
+            await using var fileStream = BlobServiceFixture.GetTestPicture();
+            using var fixture = new BlobServiceFixture();
+            var blobService = fixture.CreateService();
+            const string blobName = "Test file";
+
+            // Act, Assert
+            await Assert.ThrowsAsync<ParameterInvalidException>(() => blobService.Upload(fixture.TestBlobUserId, blobName, fileStream));            
+            Assert.True(await fixture.Context.Blobs.AnyAsync(q => q.Name == blobName));
         }
 
         [Fact]

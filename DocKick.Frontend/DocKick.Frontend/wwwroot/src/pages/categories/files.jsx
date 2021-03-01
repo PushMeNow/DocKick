@@ -5,6 +5,7 @@ import FormFileLabel from "react-bootstrap/FormFileLabel";
 import axios from "axios";
 import { combineCategorizableUrl } from "../../url-helper";
 import { toastError, toastSuccess } from "../../helpers/toast-helpers";
+import { isSupportedImage, supportedImageTypes } from "../../helpers/file-type-helpers";
 
 export default class FilesPage extends Component {
     constructor(props) {
@@ -39,7 +40,7 @@ export default class FilesPage extends Component {
                         axios.delete(combineCategorizableUrl(`blobs/${ blob.blobId }`))
                              .then(() => {
                                  toastSuccess('Your image was deleted successfully.');
-                                 
+
                                  this.loadBlobs();
                              });
                     };
@@ -94,6 +95,22 @@ export default class FilesPage extends Component {
             }
 
             let file = this.fileInput.current.files[0];
+
+            if (!isSupportedImage(file.name)) {
+                toastError('Sorry but your file is not supported.');
+                this.fileInput.isValid = false;
+
+                return false;
+            }
+            
+            let fileName = file.name.split('\\').pop();
+            
+            if (this.state.data.find(blob => fileName === blob.name)){
+                toastError('Sorry but you already have the same file.');
+                
+                return false;
+            }
+
             let data = new FormData();
 
             data.append('formFile', file);
@@ -119,7 +136,8 @@ export default class FilesPage extends Component {
                             <Form.File custom>
                                 <FormFileInput id="file-browser"
                                                onChange={ onChange }
-                                               ref={ this.fileInput } />
+                                               ref={ this.fileInput }
+                                               accept={ supportedImageTypes.join(',') } />
                                 <FormFileLabel htmlFor="file-browser"
                                                ref={ this.fileLabel }
                                                style={ { overflow: 'hidden' } }>

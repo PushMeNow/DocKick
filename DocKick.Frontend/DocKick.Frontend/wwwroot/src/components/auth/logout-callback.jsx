@@ -5,11 +5,8 @@ import { LoaderContext } from "../../context/loader-context";
 
 export const LogoutCallback = () => {
     const { signoutRedirectCallback } = useContext(AuthContext);
-    const { showLoader } = useContext(LoaderContext);
-    
-    showLoader();
 
     signoutRedirectCallback();
 
-    return <MainPage />
+    return <div>Please wait one sec...</div>
 }

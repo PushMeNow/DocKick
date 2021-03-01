@@ -5,11 +5,8 @@ import MainPage from "../../pages/main/main-page";
 
 export const LoginCallback = () => {
     const { signinRedirectCallback } = useContext(AuthContext);
-    const { showLoader } = useContext(LoaderContext);
-
-    showLoader();
 
     signinRedirectCallback();
 
-    return <MainPage />
+    return <div>Please wait one sec...</div>
 }

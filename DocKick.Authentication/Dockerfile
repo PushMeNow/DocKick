@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0.200 AS build
 WORKDIR /app
 
 COPY *.sln .
@@ -10,6 +10,7 @@ COPY DocKick.Exceptions/*.csproj ./DocKick.Exceptions/
 COPY DocKick.Extensions/*.csproj ./DocKick.Extensions/
 COPY DocKick.Mapper/*.csproj ./DocKick.Mapper/
 COPY DocKick.Services/*.csproj ./DocKick.Services/
+COPY DocKick.Validation/*.csproj ./DocKick.Validation/
 
 RUN dotnet restore
 
@@ -21,11 +22,12 @@ COPY DocKick.Exceptions/. ./DocKick.Exceptions/
 COPY DocKick.Extensions/. ./DocKick.Extensions/
 COPY DocKick.Mapper/. ./DocKick.Mapper/
 COPY DocKick.Services/. ./DocKick.Services/
+COPY DocKick.Validation/. ./DocKick.Validation/
 
 WORKDIR /app/DocKick.Authentication
 RUN dotnet publish -c Docker -o out --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.3 AS runtime
 WORKDIR /app
 
 COPY --from=build /app/DocKick.Authentication/out ./

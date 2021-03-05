@@ -1,5 +1,5 @@
 ﻿using System;
-using DocKick.Helpers.Extensions;
+using DocKick.Extensions;
 
 namespace DocKick.Exceptions
 {

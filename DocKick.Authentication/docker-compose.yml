@@ -1,10 +1,10 @@
 ﻿version: '3.9'
 
 services:
-  dockick_composed:
+  dockick_authentication:
     tty: true
-    container_name: "dockick_composed_container"
-    image: ${DOCKER_REGISTRY}dockick_composed
+    container_name: "dockick_authentication_container"
+    image: ${DOCKER_REGISTRY}dockick_authentication
     build:
       context: .
       dockerfile: Dockerfile
@@ -19,8 +19,6 @@ services:
       - ASPNETCORE_HTTPS_PORT=5000
     volumes:
     - ~/.aspnet/https:/https:ro
-    links:
-      - "mymssqlserver"
     restart: always    
     networks:
       - doc-kick

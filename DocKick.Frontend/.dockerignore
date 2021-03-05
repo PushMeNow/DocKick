@@ -1,0 +1,12 @@
+﻿**/bin/
+**/obj/
+**/out/
+**/wwwroot/build/
+**/wwwroot/node_modules/
+
+# files
+Dockerfile*
+**/*.md
+**/*.jwk
+**/wwwroot/.eslintcache
+**/wwwroot/package-lock.json

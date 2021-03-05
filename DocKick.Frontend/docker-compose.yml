@@ -1,0 +1,27 @@
+﻿version: '3.9'
+
+services:
+  dockick_frontend:
+    tty: true
+    container_name: "dockick_frontend_container"
+    image: ${DOCKER_REGISTRY}dockick_frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:5001;
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=htts-password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_HTTPS_PORT=5001
+    volumes:
+    - ~/.aspnet/https:/https:ro
+    restart: always    
+    networks:
+      - doc-kick
+
+networks:
+  doc-kick:
+    external: true

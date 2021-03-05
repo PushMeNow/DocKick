@@ -55,7 +55,7 @@ export default class FilesPage extends Component {
                                        width={ 300 } />
                             </a>
                         </td>
-                        <td>
+                        <td className="text-center">
                             <Button type="button"
                                     variant="danger"
                                     onClick={ deleteImage }>
@@ -102,12 +102,12 @@ export default class FilesPage extends Component {
 
                 return false;
             }
-            
+
             let fileName = file.name.split('\\').pop();
-            
-            if (this.state.data.find(blob => fileName === blob.name)){
+
+            if (this.state.data.find(blob => fileName === blob.name)) {
                 toastError('Sorry but you already have the same file.');
-                
+
                 return false;
             }
 

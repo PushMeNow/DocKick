@@ -38,28 +38,36 @@ namespace DocKick.Data.Repositories
         public async Task<TEntity> GetById<T>(T id)
             where T : struct
         {
+            ExceptionHelper.ThrowArgumentNullIfEmpty(id, nameof(id));
+            
             return await Set.FindAsync(id);
         }
 
-        public async Task Create(TEntity entity)
+        public async Task<TEntity> Create(TEntity entity)
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(entity, nameof(entity));
 
-            await Set.AddAsync(entity);
+            var entryEntity = await Set.AddAsync(entity);
+
+            return entryEntity.Entity;
         }
 
-        public void Update(TEntity entity)
+        public TEntity Update(TEntity entity)
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(entity, nameof(entity));
 
-            Set.Update(entity);
+            var entryEntity = Set.Update(entity);
+
+            return entryEntity.Entity;
         }
 
         public async Task Delete<T>(T id) where T : struct
         {
+            ExceptionHelper.ThrowArgumentNullIfEmpty(id, nameof(id));
+            
             var entity = await GetById(id);
 
-            ExceptionHelper.ThrowArgumentNullIfEmpty(entity, nameof(entity));
+            ExceptionHelper.ThrowParameterNullIfEmpty(entity, nameof(entity));
 
             Set.Remove(entity);
         }

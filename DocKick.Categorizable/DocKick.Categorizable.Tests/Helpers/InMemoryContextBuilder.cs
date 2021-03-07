@@ -4,13 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DocKick.Categorizable.Tests.Helpers
 {
-    public class InMemoryContextBuilder
+    public static class InMemoryContextBuilder
     {
         public static CategorizableDbContext CreateContext()
         {
-            var options = new DbContextOptionsBuilder<CategorizableDbContext>().UseInMemoryDatabase(Guid.NewGuid()
-                                                                                                        .ToString())
-                                                                               .Options;
+            var builder = new DbContextOptionsBuilder<CategorizableDbContext>();
+
+            var options = builder.UseInMemoryDatabase(Guid.NewGuid()
+                                                          .ToString())
+                                 .Options;
 
             return new CategorizableDbContext(options);
         }

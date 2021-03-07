@@ -45,10 +45,10 @@ namespace DocKick.Services
 
             var entity = Map(model);
 
-            await Repository.Create(entity);
+            var createdEntity = await Repository.Create(entity);
             await Repository.Save();
 
-            var mapped = Map(entity);
+            var mapped = Map(createdEntity);
 
             return mapped;
         }
@@ -61,10 +61,11 @@ namespace DocKick.Services
 
             entity = Map(request, entity);
 
-            Repository.Update(entity);
+            var updatedEntity = Repository.Update(entity);
+            
             await Repository.Save();
 
-            return Map(entity);
+            return Map(updatedEntity);
         }
 
         public virtual async Task Delete(TId id)

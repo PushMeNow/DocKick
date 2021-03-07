@@ -152,7 +152,8 @@ namespace DocKick.Services.Blobs
 
         private BlobClient GetBlobClient(Guid userId, string blobName)
         {
-            ExceptionHelper.ThrowArgumentNullIfEmpty((userId, nameof(userId)), (blobName, nameof(blobName)));
+            ExceptionHelper.ThrowArgumentNullIfEmpty(userId, nameof(userId));
+            ExceptionHelper.ThrowArgumentNullIfEmpty(blobName, nameof(blobName));
 
             return _blobContainer.GetBlobClient(GetFullBlobName(userId, blobName));
         }

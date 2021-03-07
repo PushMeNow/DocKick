@@ -11,9 +11,9 @@ namespace DocKick.Data.Repositories
         Task<TEntity> GetById<T>(T id)
             where T : struct;
 
-        Task Create(TEntity entity);
+        Task<TEntity> Create(TEntity entity);
 
-        void Update(TEntity entity);
+        TEntity Update(TEntity entity);
 
         Task Delete<T>(T id) where T : struct;
 

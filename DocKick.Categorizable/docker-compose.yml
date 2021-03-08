@@ -1,0 +1,27 @@
+﻿version: '3.9'
+
+services:
+  dockick_categorizable:
+    tty: true
+    container_name: "dockick_categorizable_container"
+    image: ${DOCKER_REGISTRY}dockick_categorizable
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:5002
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=htts-password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_HTTPS_PORT=5002
+    volumes:
+    - ~/.aspnet/https:/https:ro
+    restart: always    
+    networks:
+      - doc-kick
+
+networks:
+  doc-kick:
+    external: true

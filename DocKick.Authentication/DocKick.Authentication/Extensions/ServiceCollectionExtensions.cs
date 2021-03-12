@@ -1,6 +1,7 @@
 ﻿using System;
 using DocKick.Authentication.Settings;
 using DocKick.Entities.Users;
+using DocKick.Extensions;
 using DocKick.Services;
 using DocKick.Services.Settings;
 using IdentityServer4;
@@ -92,7 +93,11 @@ namespace DocKick.Authentication.Extensions
                                                          options.Authority = authSettings.Authority;
                                                          options.SaveToken = true;
                                                          options.RequireHttpsMetadata = false;
-                                                         options.MetadataAddress = authSettings.MetadataAddress;
+
+                                                         if (!authSettings.MetadataAddress.IsEmpty())
+                                                         {
+                                                             options.MetadataAddress = authSettings.MetadataAddress;
+                                                         }
 
                                                          options.TokenValidationParameters = new TokenValidationParameters
                                                                                              {

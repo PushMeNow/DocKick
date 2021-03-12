@@ -7,3 +7,4 @@ riderModule.iml
 *.Development.json
 *.DotSettings.user
 *.jwk
+*.Docker.json

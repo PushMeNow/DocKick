@@ -41,7 +41,7 @@ export class CategoryList extends Component {
     }
 
     renderTableBody() {
-        return (!this.state.data.length
+        return (!this.state.data || !this.state.data.length
             ? this.renderNothingFound()
             : this.state.data.map(category => {
                 const showModal = () => {

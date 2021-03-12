@@ -3,6 +3,7 @@ WORKDIR /app
 
 COPY *.sln .
 COPY DocKick.Categorizable/*.csproj ./DocKick.Categorizable/
+COPY DocKick.Categorizable.Tests/*.csproj ./DocKick.Categorizable.Tests/
 COPY DocKick.Data/*.csproj ./DocKick.Data/
 COPY DocKick.Dtos/*.csproj ./DocKick.Dtos/
 COPY DocKick.Entities/*.csproj ./DocKick.Entities/
@@ -15,6 +16,7 @@ COPY DocKick.Validation/*.csproj ./DocKick.Validation/
 RUN dotnet restore
 
 COPY DocKick.Categorizable/. ./DocKick.Categorizable/
+COPY DocKick.Categorizable.Tests/*.csproj ./DocKick.Categorizable.Tests/
 COPY DocKick.Data/. ./DocKick.Data/
 COPY DocKick.Dtos/. ./DocKick.Dtos/
 COPY DocKick.Entities/. ./DocKick.Entities/
@@ -24,7 +26,8 @@ COPY DocKick.Mapper/. ./DocKick.Mapper/
 COPY DocKick.Services/. ./DocKick.Services/
 COPY DocKick.Validation/. ./DocKick.Validation/
 
-WORKDIR /app/DocKick.Authentication
+WORKDIR /app/DocKick.Categorizable
+
 RUN dotnet publish -c Docker -o out --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0.3 AS runtime

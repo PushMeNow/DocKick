@@ -4,15 +4,18 @@ using Azure.Storage.Blobs;
 using DocKick.Categorizable.Extensions;
 using DocKick.Categorizable.Settings;
 using DocKick.Data.Extensions;
+using DocKick.Helpers.Extensions;
 using DocKick.Services.Blobs;
 using DocKick.Services.Categories;
 using FluentValidation.AspNetCore;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DocKick.Categorizable
 {
@@ -34,14 +37,20 @@ namespace DocKick.Categorizable
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DocKick.Categorizable v1"));
             }
 
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+                                    {
+                                        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                                    });
+
             app.UseCors(config =>
                         {
                             config.AllowAnyHeader()
                                   .AllowAnyMethod()
                                   .AllowAnyOrigin();
                         });
-
+#if DEBUG || RELEASE
             app.UseHttpsRedirection();
+#endif
 
             app.UseRouting();
 
@@ -74,11 +83,28 @@ namespace DocKick.Categorizable
             services.AddDatabaseConfig(Configuration.GetConnectionString("DocKickCategorizable"));
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                    .AddIdentityServerAuthentication(options =>
+                    .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme,
+                                                     options =>
                                                      {
                                                          options.Authority = authSettings.Authority;
                                                          options.SaveToken = true;
-                                                     });
+                                                         options.RequireHttpsMetadata = false;
+
+                                                         if (!authSettings.MetadataAddress.IsEmpty())
+                                                         {
+                                                             options.MetadataAddress = authSettings.MetadataAddress;
+                                                         }
+
+                                                         options.TokenValidationParameters = new TokenValidationParameters
+                                                                                             {
+                                                                                                 ValidateAudience = false,
+                                                                                                 ValidateIssuerSigningKey = false,
+                                                                                                 ValidateIssuer = false,
+                                                                                                 NameClaimType = "name",
+                                                                                                 RoleClaimType = "role"
+                                                                                             };
+                                                     },
+                                                     null);
 
             services.AddAuthorization(options =>
                                       {

@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\DocKick.Categorizable\DocKick.Helpers\DocKick.Helpers.csproj" />
+      <ProjectReference Include="..\DocKick.Helpers\DocKick.Helpers.csproj" />
     </ItemGroup>
 
 </Project>

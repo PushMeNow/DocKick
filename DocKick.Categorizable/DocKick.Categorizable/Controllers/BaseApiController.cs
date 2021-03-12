@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using AutoMapper;
+using DocKick.Categorizable.Extensions;
 using FluentValidation;
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +21,7 @@ namespace DocKick.Categorizable.Controllers
             Mapper = mapper;
         }
         
-        protected Guid UserId => Guid.Parse(User.GetSubjectId());
+        protected Guid UserId => User.GetUserId();
 
         protected void CheckValidation()
         {

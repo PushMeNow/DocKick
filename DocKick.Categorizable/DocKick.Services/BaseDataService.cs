@@ -53,13 +53,13 @@ namespace DocKick.Services
             return mapped;
         }
 
-        public virtual async Task<TModel> Update(TId id, TModel request)
+        public virtual async Task<TModel> Update(TId id, TModel model)
         {
             var entity = await Repository.GetById(id);
 
             ExceptionHelper.ThrowNotFoundIfEmpty(entity, typeof(TEntity).Name);
 
-            entity = Map(request, entity);
+            entity = Map(model, entity);
 
             var updatedEntity = Repository.Update(entity);
             

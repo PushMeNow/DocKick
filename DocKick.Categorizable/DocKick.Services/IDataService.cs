@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace DocKick.Services
 {
@@ -12,7 +11,7 @@ namespace DocKick.Services
 
         Task<TModel> Create(TModel model);
 
-        Task<TModel> Update(TId id, TModel request);
+        Task<TModel> Update(TId id, TModel model);
 
         Task Delete(TId id);
     }

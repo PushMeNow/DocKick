@@ -5,22 +5,22 @@ import { LoaderContext } from "./context/loader-context";
 
 export const AxiosConfig = () => {
     let counter = 0;
-    
-    const authContext = useContext(AuthContext);
-    const loaderContext = useContext(LoaderContext);
-    const authHeader = authContext.getAuthorizationHeader();
+
+    const { getAuthorizationHeader } = useContext(AuthContext);
+    const { showLoader, hideLoader } = useContext(LoaderContext);
+    const authHeader = getAuthorizationHeader();
     const onResponse = responseConfig => {
-        if(counter > 0){
+        if (counter > 0) {
             counter--;
         }
 
         if (counter === 0) {
-            loaderContext.hideLoader();
+            hideLoader();
         }
 
         return responseConfig;
     };
-    
+
 
     if (!!authHeader) {
         axios.defaults.headers.common['Authorization'] = authHeader;
@@ -28,14 +28,14 @@ export const AxiosConfig = () => {
 
     axios.interceptors.request.use(requestConfig => {
         counter++;
-        
-        if (counter > 0){
-            loaderContext.showLoader();
+
+        if (counter > 0) {
+            showLoader();
         }
 
         return requestConfig;
     });
-    
+
     axios.interceptors.response.use(onResponse, onResponse);
 
     return <></>;

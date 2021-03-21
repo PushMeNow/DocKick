@@ -15,7 +15,8 @@ export default class FilesPage extends Component {
         this.fileInput = createRef();
 
         this.state = {
-            data: null
+            data: null,
+            categories: null
         }
     }
 
@@ -28,6 +29,40 @@ export default class FilesPage extends Component {
     }
 
     renderTableBody() {
+        const categories = this.state.categories;
+
+        const renderDropdownCategory = (blob) => {
+            const onChange = function ({ target }) {
+                let value = target.value;
+
+                if (!blob) {
+                    console.error('Incorrect data.');
+
+                    return false;
+                }
+
+                axios.put(combineCategorizableUrl(`blobs/${ blob.blobId }`), {
+                    categoryId: value || null
+                }).then(response => {
+                    toastSuccess(`Category was ${ !value ? 'removed' : 'updated' } successfully for ${ blob.name }.`);
+                });
+            };
+
+            return (
+                <Form.Control as="select"
+                              custom
+                              onChange={ onChange }>
+                    <option value="">Nothing selected</option>
+                    {
+                        categories && categories.length && categories.map(category => {
+                            let props = blob.categoryId && category.categoryId === blob.categoryId ? { selected: true } : {};
+                            return <option value={ category.categoryId } { ...props }>{ category.name }</option>
+                        })
+                    }
+                </Form.Control>
+            )
+        };
+
         return (
             !this.state.data.length
                 ? this.renderNothingFound()
@@ -47,6 +82,7 @@ export default class FilesPage extends Component {
 
                     return <tr>
                         <td>{ blob.name }</td>
+                        <td>{ renderDropdownCategory(blob) }</td>
                         <td className="text-center">
                             <a href={ blob.blobLink.url }
                                target="_blank">
@@ -74,7 +110,18 @@ export default class FilesPage extends Component {
              });
     }
 
+    loadCategories() {
+        axios.get(combineCategorizableUrl('categories'))
+             .then(response => {
+                 this.setState({ categories: response.data });
+             });
+    }
+
     componentDidMount() {
+        if (this.state.categories === null) {
+            this.loadCategories();
+        }
+
         if (this.state.data === null) {
             this.loadBlobs();
         }
@@ -82,7 +129,7 @@ export default class FilesPage extends Component {
 
     render() {
         const labelText = 'Here will be your file name';
-        const onChange = (e) => {
+        const changeFile = (e) => {
             let filePath = e.target.value;
 
             this.fileLabel.current.innerText = !filePath ? labelText : filePath.split('\\').pop();
@@ -135,7 +182,7 @@ export default class FilesPage extends Component {
                         <ButtonGroup>
                             <Form.File custom>
                                 <FormFileInput id="file-browser"
-                                               onChange={ onChange }
+                                               onChange={ changeFile }
                                                ref={ this.fileInput }
                                                accept={ supportedImageTypes.join(',') } />
                                 <FormFileLabel htmlFor="file-browser"
@@ -159,6 +206,7 @@ export default class FilesPage extends Component {
                         <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Category</th>
                             <th>Image</th>
                             <th>Action</th>
                         </tr>

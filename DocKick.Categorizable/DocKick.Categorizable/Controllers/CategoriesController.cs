@@ -34,7 +34,7 @@ namespace DocKick.Categorizable.Controllers
             CheckValidation();
 
             var model = Mapper.Map<CategoryModel>(request);
-            
+
             SetUserId(model);
 
             return await _categoryService.Create(model);
@@ -46,7 +46,7 @@ namespace DocKick.Categorizable.Controllers
             CheckValidation();
 
             var model = Mapper.Map<CategoryModel>(request);
-            
+
             SetUserId(model);
 
             return await _categoryService.Update(categoryId, model);
@@ -56,7 +56,7 @@ namespace DocKick.Categorizable.Controllers
         public async Task Delete([FromRoute] Guid categoryId)
         {
             CheckValidation();
-            
+
             await _categoryService.Delete(categoryId);
         }
 

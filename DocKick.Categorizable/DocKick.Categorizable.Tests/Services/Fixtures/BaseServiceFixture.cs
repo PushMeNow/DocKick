@@ -1,4 +1,5 @@
 ﻿using System;
+using AutoMapper;
 using DocKick.Categorizable.Tests.Helpers;
 using DocKick.Data;
 
@@ -8,16 +9,20 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
     {
         public CategorizableDbContext Context { get; }
 
+        public IMapper Mapper => MapperHelper.Instance;
+
         protected BaseServiceFixture(bool createContext = true)
         {
-            if (createContext)
+            if (!createContext)
             {
-                Context = InMemoryContextBuilder.CreateContext();
-
-                InitDatabase();
-
-                Context.SaveChanges();
+                return;
             }
+
+            Context = InMemoryContextBuilder.CreateContext();
+
+            InitDatabase();
+
+            Context.SaveChanges();
         }
 
         public abstract TService CreateService();

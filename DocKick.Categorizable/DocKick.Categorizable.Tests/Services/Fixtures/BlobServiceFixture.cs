@@ -30,8 +30,9 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
             var blobClientService = new BlobServiceClient(connString);
             
             var blobRepository = new BlobRepository(Context);
+            var blobDataService = new BlobDataService(blobRepository, Mapper);
 
-            return new BlobService(blobClientService, blobRepository, MapperHelper.Instance);
+            return new BlobService(blobClientService, blobDataService);
         }
 
         public static Stream GetTestPicture()
@@ -52,7 +53,7 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
 
             BlobId = Context.Blobs.Add(new Blob
                                        {
-                                           Name = TestBlobName,
+                                           ImageName = TestBlobName,
                                            CategoryId = CategoryId,
                                            UserId = TestBlobUserId
                                        })

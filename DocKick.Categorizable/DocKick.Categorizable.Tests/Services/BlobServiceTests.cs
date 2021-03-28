@@ -33,28 +33,11 @@ namespace DocKick.Categorizable.Tests.Services
             await using var fileStream = BlobServiceFixture.GetTestPicture();
             using var fixture = new BlobServiceFixture();
             var blobService = fixture.CreateService();
-            const string blobName = "Test file";
+            const string imageName = "Test file";
 
             // Act, Assert
-            await Assert.ThrowsAsync<ParameterInvalidException>(() => blobService.Upload(fixture.TestBlobUserId, blobName, fileStream));            
-            Assert.True(await fixture.Context.Blobs.AnyAsync(q => q.Name == blobName));
-        }
-
-        [Fact]
-        public async Task Download_OK()
-        {
-            // Arrange 
-            using var fixture = new BlobServiceFixture();
-            var service = fixture.CreateService();
-
-            // Act
-            var model = await service.Download(fixture.BlobId);
-
-            // Assert
-            using var info = model.BlobDownloadInfo;
-
-            Assert.NotNull(model.BlobDownloadInfo);
-            Assert.NotEmpty(model.Name);
+            await Assert.ThrowsAsync<ParameterInvalidException>(() => blobService.Upload(fixture.TestBlobUserId, imageName, fileStream));            
+            Assert.True(await fixture.Context.Blobs.AnyAsync(q => q.ImageName == imageName));
         }
 
         [Fact]

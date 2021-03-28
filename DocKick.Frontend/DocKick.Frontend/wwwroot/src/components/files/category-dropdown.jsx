@@ -1,6 +1,6 @@
 ﻿import React, { Component } from "react";
 import axios from "axios";
-import { combineCategorizableUrl } from "../../url-helper";
+import { getBlobsUpdateUrl } from "../../url-helper";
 import { toastSuccess } from "../../helpers/toast-helpers";
 import { Form } from "react-bootstrap";
 
@@ -30,10 +30,10 @@ export class CategoryDropdown extends Component {
                 return false;
             }
 
-            axios.put(combineCategorizableUrl(`blobs/${ blob.blobId }`), {
+            axios.put(getBlobsUpdateUrl(blob.blobId), {
                 categoryId: value || null
             }).then(response => {
-                toastSuccess(`Category was ${ !value ? 'removed' : 'updated' } successfully for ${ blob.name }.`);
+                toastSuccess(`Category was ${ !value ? 'removed' : 'updated' } successfully for ${ blob.imageName }.`);
             });
         };
 

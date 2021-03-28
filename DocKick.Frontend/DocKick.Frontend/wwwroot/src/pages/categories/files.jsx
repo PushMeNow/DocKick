@@ -3,7 +3,7 @@ import { Button, ButtonGroup, Form, Image, Table } from "react-bootstrap";
 import FormFileInput from "react-bootstrap/FormFileInput";
 import FormFileLabel from "react-bootstrap/FormFileLabel";
 import axios from "axios";
-import { combineCategorizableUrl } from "../../url-helper";
+import { combineCategorizableUrl, getBlobsUploadUrl, getBlobsUrl, getCategoriesUrl } from "../../url-helper";
 import { toastError, toastSuccess } from "../../helpers/toast-helpers";
 import { isSupportedImage, supportedImageTypes } from "../../helpers/file-type-helpers";
 import { CategoryDropdown } from "../../components/files/category-dropdown";
@@ -25,14 +25,14 @@ export default class FilesPage extends Component {
     }    
 
     loadBlobs() {
-        axios.get(combineCategorizableUrl('blobs'))
+        axios.get(getBlobsUrl())
              .then(response => {
                  this.setState({ blobs: response.data });
              });
     }
 
     loadCategories() {
-        axios.get(combineCategorizableUrl('categories'))
+        axios.get(getCategoriesUrl())
              .then(response => {
                  this.setState({ categories: response.data });
              });
@@ -73,7 +73,7 @@ export default class FilesPage extends Component {
 
             let fileName = file.name.split('\\').pop();
 
-            if (this.state.blobs.find(blob => fileName === blob.name)) {
+            if (this.state.blobs.find(blob => fileName === blob.imageName)) {
                 toastError('Sorry but you already have the same file.');
 
                 return false;
@@ -83,7 +83,7 @@ export default class FilesPage extends Component {
 
             data.append('formFile', file);
 
-            axios.post(combineCategorizableUrl('blobs/upload'), data, {
+            axios.post(getBlobsUploadUrl(), data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -127,7 +127,7 @@ export default class FilesPage extends Component {
                                                                                                blob={ blob } />;
 
                         return <tr key={ 'files-list-' + blob.blobId }>
-                            <td>{ blob.name }</td>
+                            <td>{ blob.imageName }</td>
                             <td>
                                 { ddl }
                             </td>

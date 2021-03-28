@@ -14,10 +14,12 @@ namespace DocKick.Categorizable.Controllers
     public class BlobsController : BaseApiController
     {
         private readonly IBlobService _blobService;
+        private readonly IBlobDataService _blobDataService;
 
-        public BlobsController(IBlobService blobService, IMapper mapper) : base(mapper)
+        public BlobsController(IBlobService blobService, IBlobDataService blobDataService, IMapper mapper) : base(mapper)
         {
             _blobService = blobService;
+            _blobDataService = blobDataService;
         }
 
         [HttpGet]
@@ -32,7 +34,7 @@ namespace DocKick.Categorizable.Controllers
             var model = Mapper.Map<BlobModel>(request);
             model.UserId = UserId;
 
-            return await _blobService.Update(blobId, model);
+            return await _blobDataService.Update(blobId, model);
         }
 
         [HttpPost("upload")]
@@ -49,7 +51,7 @@ namespace DocKick.Categorizable.Controllers
         [HttpDelete("{blobId:Guid}")]
         public async Task DeleteBlob(Guid blobId)
         {
-            await _blobService.Delete(blobId);
+            await _blobDataService.Delete(blobId);
         }
     }
 }

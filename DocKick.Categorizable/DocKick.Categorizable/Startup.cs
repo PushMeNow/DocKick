@@ -121,6 +121,7 @@ namespace DocKick.Categorizable
             services.AddScoped(_ => new BlobServiceClient(Configuration.GetConnectionString("AzureBlobStorage")));
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IBlobService, BlobService>();
+            services.AddScoped<IBlobDataService, BlobDataService>();
         }
     }
 }

@@ -19,7 +19,7 @@ namespace DocKick.Categorizable.Tests.Services.Fixtures
         {
             var repo = new CategoryRepository(Context);
 
-            return new CategoryService(repo, MapperHelper.Instance);
+            return new CategoryService(repo, Mapper);
         }
 
         protected override void InitDatabase()

@@ -2,9 +2,5 @@
 import { CategoryList } from "../../components/categories/category-list";
 
 export const CategoryPage = () => {
-    return (
-        <>
-            <CategoryList />
-        </>
-    )
+    return <CategoryList />;
 }

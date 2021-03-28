@@ -20,4 +20,6 @@ export const identityServerConfig = {
     scope: "openid profile offline_access api1",
     // URL to redirect to after logout
     post_logout_redirect_uri: `${ process.env.REACT_APP_PUBLIC_URL }/logout-callback`,
+    checkSessionInterval: 10000,
+    monitorSession: false
 }

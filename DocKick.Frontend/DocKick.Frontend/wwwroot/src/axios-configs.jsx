@@ -1,22 +1,24 @@
-﻿import axios from "axios";
-import { useContext } from "react";
+﻿import React, { useContext, useState } from "react";
+import axios from "axios";
 import { AuthContext } from "./context/auth-context";
-import { LoaderContext } from "./context/loader-context";
+import { Loader } from "./components/loader/loader";
 
 export const AxiosConfig = () => {
     let counter = 0;
 
+    const [loading, setLoading] = useState(false);
     const { getAuthorizationHeader } = useContext(AuthContext);
-    const { showLoader, hideLoader } = useContext(LoaderContext);
     const authHeader = getAuthorizationHeader();
+    const toggleLoader = () => {
+        setLoading(() => counter !== 0);
+    };
+
     const onResponse = responseConfig => {
         if (counter > 0) {
             counter--;
         }
 
-        if (counter === 0) {
-            hideLoader();
-        }
+        toggleLoader();
 
         return responseConfig;
     };
@@ -29,14 +31,12 @@ export const AxiosConfig = () => {
     axios.interceptors.request.use(requestConfig => {
         counter++;
 
-        if (counter > 0) {
-            showLoader();
-        }
+        toggleLoader();
 
         return requestConfig;
     });
 
     axios.interceptors.response.use(onResponse, onResponse);
 
-    return <></>;
+    return <Loader showLoader={ loading } />;
 }

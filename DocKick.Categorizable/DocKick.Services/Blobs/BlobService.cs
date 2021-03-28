@@ -106,6 +106,21 @@ namespace DocKick.Services.Blobs
             return model;
         }
 
+        public override async Task<BlobModel> Update(Guid id, BlobModel model)
+        {
+            var entity = await Repository.GetById(id);
+
+            ExceptionHelper.ThrowNotFoundIfEmpty(entity, nameof(Blob));
+
+            entity.CategoryId = model.CategoryId;
+
+            var updatedEntity = Repository.Update(entity);
+            
+            await Repository.Save();
+
+            return Map(updatedEntity);
+        }
+
         public override async Task<bool> Delete(Guid blobId)
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(blobId, nameof(blobId));

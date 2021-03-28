@@ -11,8 +11,6 @@ namespace DocKick.Mapper
             CreateMap<BlobRequest, BlobModel>();
             CreateMap<Blob, BlobModel>();
             CreateMap<BlobModel, Blob>()
-                .ForMember(q => q.UserId, q => q.Ignore())
-                .ForMember(q => q.Name, q => q.Ignore())
                 .ForMember(q => q.BlobId, q => q.Ignore())
                 .ForMember(q => q.BlobLink, q => q.Ignore());
 

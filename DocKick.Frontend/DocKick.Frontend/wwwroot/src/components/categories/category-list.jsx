@@ -10,85 +10,88 @@ export class CategoryList extends Component {
         super(props);
 
         this.state = {
-            data: null
-        }
+            categories: null
+        };
 
         this.modal = null;
         this.setModal = el => {
             this.modal = el;
-        }
+        };
 
         this.loadData = this.loadData.bind(this);
     }
 
     componentDidMount() {
-        if (this.state.data === null) {
+        if (this.state.categories === null) {
             this.loadData();
         }
     }
 
-    renderNothingFound() {
-        return <tr>
-            <td colSpan={ 3 }>Nothing found</td>
-        </tr>
-    }
 
     loadData() {
         axios.get(combineCategorizableUrl('categories'))
              .then(response => {
-                 this.setState({ data: response.data });
+                 this.setState({ categories: response.data });
              });
     }
 
-    renderTableBody() {
-        return (!this.state.data || !this.state.data.length
-            ? this.renderNothingFound()
-            : this.state.data.map(category => {
-                const showModal = () => {
-                    this.modal.setCategory(category);
-                    this.modal.showModal();
-                }
-
-                const deleteCategory = () => {
-                    if (!confirm(`Are you sure want delete category ${ category.name }?`)) {
-                        return;
-                    }
-
-                    axios.delete(combineCategorizableUrl(`categories/${ category.categoryId }`))
-                         .then(() => {
-                             toastSuccess(`Category ${ category.name } was deleted successfully.`);
-                         }).finally(() => {
-                        this.loadData();
-                    });
-                }
-
-                return (
-                    <tr>
-                        <td>
-                            { category.name }
-                        </td>
-                        <td>
-                            { category.parentName }
-                        </td>
-                        <td align="center">
-                            <Button variant="secondary"
-                                    onClick={ showModal }>Edit</Button>
-                            <Button variant="danger"
-                                    onClick={ deleteCategory }>Delete</Button>
-                        </td>
-                    </tr>
-                )
-            }));
-    }
 
     render() {
         const showModal = () => {
             this.modal.setCategory();
             this.modal.showModal();
-        }
+        };
+
+        const renderNothingFound = () => {
+            return <tr>
+                <td colSpan={ 3 }>Nothing found</td>
+            </tr>
+        };
+
+        const renderTableBody = (categories) => {
+            return (
+                !categories || !categories.length
+                    ? renderNothingFound()
+                    : categories.map(category => {
+                        const showModal = () => {
+                            this.modal.setCategory(category);
+                            this.modal.showModal();
+                        };
+
+                        const deleteCategory = () => {
+                            if (!confirm(`Are you sure want delete category ${ category.name }?`)) {
+                                return;
+                            }
+
+                            axios.delete(combineCategorizableUrl(`categories/${ category.categoryId }`))
+                                 .then(() => {
+                                     toastSuccess(`Category ${ category.name } was deleted successfully.`);
+                                 }).finally(() => {
+                                this.loadData();
+                            });
+                        };
+
+                        return (
+                            <tr key={ 'category-list-' + category.categoryId }>
+                                <td>
+                                    { category.name }
+                                </td>
+                                <td>
+                                    { category.parentName }
+                                </td>
+                                <td align="center">
+                                    <Button variant="secondary"
+                                            onClick={ showModal }>Edit</Button>
+                                    <Button variant="danger"
+                                            onClick={ deleteCategory }>Delete</Button>
+                                </td>
+                            </tr>
+                        )
+                    }));
+        };
 
         return (
-            <>
+            <div>
                 <div className="mb-3 d-flex justify-content-end">
                     <CategoryModalForm ref={ this.setModal }
                                        updateTable={ this.loadData } />
@@ -106,12 +109,12 @@ export class CategoryList extends Component {
                     </tr>
                     </thead>
                     <tbody>
-                    { this.state.data === null
-                        ? this.renderNothingFound()
-                        : this.renderTableBody() }
+                    { this.state.categories === null
+                        ? renderNothingFound()
+                        : renderTableBody(this.state.categories) }
                     </tbody>
                 </Table>
-            </>
+            </div>
         )
     }
 }

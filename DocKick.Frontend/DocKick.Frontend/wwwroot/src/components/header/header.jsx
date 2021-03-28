@@ -1,19 +1,12 @@
 ﻿import { Nav, Navbar } from "react-bootstrap";
-import React, { useContext } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../context/auth-context";
-import { LogoutButton } from "../auth/logout-button";
-import { LoginButton } from "../auth/login-button";
+import { AuthProvider } from "../../context/auth-context";
 import { UserMenu } from "./user-menu";
 import NavbarCollapse from "react-bootstrap/NavbarCollapse";
+import { LoginLogoutButton } from "../auth/login-logout-button";
 
 const Header = () => {
-    const { isAuthenticated } = useContext(AuthContext);
-
-    let loginBtn = !isAuthenticated()
-        ? <LoginButton />
-        : <LogoutButton />;
-
     return (
         <Navbar bg="light"
                 expand="lg">
@@ -26,10 +19,14 @@ const Header = () => {
                 <Nav className="mr-auto">
                     <Link to="/"
                           className="nav-link">Home</Link>
-                    <UserMenu />
+                    <AuthProvider>
+                        <UserMenu />
+                    </AuthProvider>
                 </Nav>
                 <Nav>
-                    { loginBtn }
+                    <AuthProvider>
+                        <LoginLogoutButton />
+                    </AuthProvider>
                 </Nav>
             </NavbarCollapse>
         </Navbar>

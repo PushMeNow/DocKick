@@ -1,19 +1,19 @@
 ﻿import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { LoginCallback } from "../../components/auth/login-callback";
-import { LogoutCallback } from "../../components/auth/logout-callback";
 import Profile from "../../pages/user/profile";
 import { CategoryPage } from "../../pages/categories/category";
 import { CategoryTree } from "../../pages/categories/category-tree";
 import FilesPage from "../../pages/categories/files";
+import { LoginCallbackPage } from "../../pages/auth/login-callback-page";
+import { LogoutCallbackPage } from "../../pages/auth/logout-callback-page";
 
 const PublicLayout = () => {
     return (
         <Switch>
             <Route path="/login-callback"
-                   component={ LoginCallback } />
+                   component={ LoginCallbackPage } />
             <Route path="/logout-callback"
-                   component={ LogoutCallback } />
+                   component={ LogoutCallbackPage } />
             <Route path="/profile"
                    component={ Profile } />
             <Route path="/categories"

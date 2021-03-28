@@ -10,7 +10,6 @@ import { AuthProvider } from "./context/auth-context";
 import { AxiosConfig } from "./axios-configs";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from "react-toastify";
-import { LoaderProvider } from "./context/loader-context";
 
 const App = React.memo(() => (
     <>
@@ -18,31 +17,29 @@ const App = React.memo(() => (
                         position={ "bottom-center" } />
         <BrowserRouter>
             <AuthProvider>
-                <LoaderProvider>
-                    <AxiosConfig />
-                </LoaderProvider>
-                <Header />
-                <Container>
-                    <div className="mt-3">
-                        <Switch>
-                            <Route path="/login-callback"
-                                   component={ PublicLayout } />
-                            <Route path="/logout-callback"
-                                   component={ PublicLayout } />
-                            <Route path="/profile"
-                                   component={ PublicLayout } />
-                            <Route path="/categories"
-                                   component={ PublicLayout } />
-                            <Route path="/category-tree"
-                                   component={ PublicLayout } />
-                            <Route path="/files"
-                                   component={ PublicLayout } />
-                            <PrivateRoute path="/"
-                                          component={ PrivateLayout } />
-                        </Switch>
-                    </div>
-                </Container>
+                <AxiosConfig />
             </AuthProvider>
+            <Header />
+            <Container>
+                <div className="mt-3">
+                    <Switch>
+                        <Route path="/login-callback"
+                               component={ PublicLayout } />
+                        <Route path="/logout-callback"
+                               component={ PublicLayout } />
+                        <Route path="/profile"
+                               component={ PublicLayout } />
+                        <Route path="/categories"
+                               component={ PublicLayout } />
+                        <Route path="/category-tree"
+                               component={ PublicLayout } />
+                        <Route path="/files"
+                               component={ PublicLayout } />
+                        <PrivateRoute path="/"
+                                      component={ PrivateLayout } />
+                    </Switch>
+                </div>
+            </Container>
         </BrowserRouter>
     </>
 ));

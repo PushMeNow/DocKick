@@ -1,4 +1,4 @@
-﻿import React, { Component } from "react";
+﻿import React, { Component, createRef } from "react";
 import axios from "axios";
 import { combineIdentityServerUrl } from "../../url-helper";
 import { Button, Form, FormControl } from "react-bootstrap";
@@ -15,15 +15,17 @@ class Profile extends Component {
             profession: '',
             country: '',
             city: '',
-            phone: '',
-            disabled: true
+            phone: ''
         }
+
+        this.emailInput = createRef();
     }
 
     componentDidMount() {
         axios.get(combineIdentityServerUrl('account/profile'))
              .then(response => {
-                 this.setState({ ...response.data, disabled: false });
+                 this.setState({ ...response.data });
+                 this.emailInput.current.value = response.data.email;
              });
     }
 
@@ -48,7 +50,7 @@ class Profile extends Component {
                 city,
                 phone
             }).then(response => {
-                this.setState({ ...response.data, disabled: false });
+                this.setState({ ...response.data });
 
                 toastSuccess('Profile was saved successfully.');
             });
@@ -63,7 +65,7 @@ class Profile extends Component {
                 <Form.Group>
                     <Form.Label>Email</Form.Label>
                     <FormControl type="text"
-                                 value={ this.state.email }
+                                 ref={ this.emailInput }
                                  disabled />
                 </Form.Group>
                 <Form.Group>
@@ -115,8 +117,7 @@ class Profile extends Component {
                                  name="phone"
                                  onChange={ onChange } />
                 </Form.Group>
-                <Button onClick={ updateProfile }
-                        disabled={ this.state.disabled }>Save</Button>
+                <Button onClick={ updateProfile }>Save</Button>
             </Form>
         )
     }

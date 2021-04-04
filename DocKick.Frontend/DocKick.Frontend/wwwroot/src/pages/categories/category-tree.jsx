@@ -21,7 +21,7 @@ export class CategoryTree extends Component {
     }
 
     fillData() {
-        const parseCategory = (category) => {
+        const parseCategory = category => {
             let result = {
                 title: category.name,
                 expanded: true,
@@ -58,7 +58,7 @@ export class CategoryTree extends Component {
     }
 
     render() {
-        const onTreeChange = (treeData) => this.setState({ treeData });
+        const onTreeChange = treeData => this.setState({ treeData });
         const onMoveNode = ({ nextParentNode, node }) => {
             let newNodeData = {
                 ...node.currentData,
@@ -67,11 +67,19 @@ export class CategoryTree extends Component {
             this.changeNodeData(newNodeData);
         };
 
+        const renderTree = () => {
+            if (!this.state.treeData || !this.state.treeData.length) {
+                return <div>There aren't tree nodes.</div>
+            }
+
+            return <SortableTree treeData={ this.state.treeData }
+                                 onChange={ onTreeChange }
+                                 onMoveNode={ onMoveNode } />;
+        }
+
         return (
             <div style={ { height: 400 } }>
-                <SortableTree treeData={ this.state.treeData }
-                              onChange={ onTreeChange }
-                              onMoveNode={ onMoveNode } />
+                { renderTree() }
             </div>
         );
     }

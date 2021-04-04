@@ -27,6 +27,7 @@ namespace DocKick.Frontend
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
 
             app.UseSpa(spa =>
                        {

@@ -23,7 +23,6 @@ export const AxiosConfig = () => {
         return responseConfig;
     };
 
-
     if (!!authHeader) {
         axios.defaults.headers.common['Authorization'] = authHeader;
     }

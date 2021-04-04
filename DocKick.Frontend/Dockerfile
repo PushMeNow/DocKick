@@ -1,12 +1,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0.200 AS build
+WORKDIR /app
 
 ### Insall NodeJS
-RUN apt-get install --yes curl
-RUN curl --silent --location https://deb.nodesource.com/setup_15.x | bash -
+RUN curl --silent --location https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get install -y nodejs
 ###
-
-WORKDIR /app
 
 COPY *.sln .
 COPY DocKick.Frontend/*.csproj ./DocKick.Frontend/

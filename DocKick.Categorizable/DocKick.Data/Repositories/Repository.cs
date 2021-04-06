@@ -25,7 +25,7 @@ namespace DocKick.Data.Repositories
         {
             return Set.AsNoTracking();
         }
-        
+
         /// <summary>
         /// Method for lazy loading props
         /// </summary>
@@ -39,7 +39,7 @@ namespace DocKick.Data.Repositories
             where T : struct
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(id, nameof(id));
-            
+
             return await Set.FindAsync(id);
         }
 
@@ -61,10 +61,11 @@ namespace DocKick.Data.Repositories
             return entryEntity.Entity;
         }
 
-        public async Task Delete<T>(T id) where T : struct
+        public async Task Delete<T>(T id)
+            where T : struct
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(id, nameof(id));
-            
+
             var entity = await GetById(id);
 
             ExceptionHelper.ThrowParameterNullIfEmpty(entity, nameof(entity));
@@ -72,9 +73,38 @@ namespace DocKick.Data.Repositories
             Set.Remove(entity);
         }
 
+        public void Delete(TEntity entity)
+        {
+            ExceptionHelper.ThrowArgumentNullIfEmpty(entity, nameof(entity));
+
+            Set.Remove(entity);
+        }
+
         public async Task Save()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public async Task ExecuteInTransaction(Action action)
+        {
+            ExceptionHelper.ThrowArgumentNullIfEmpty(action, nameof(action));
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            action();
+
+            await transaction.CommitAsync();
+        }
+
+        public async Task ExecuteInTransaction(Func<Task> func)
+        {
+            ExceptionHelper.ThrowArgumentNullIfEmpty(func, nameof(func));
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            await func();
+
+            await transaction.CommitAsync();
         }
 
         public void Dispose()

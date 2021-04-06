@@ -74,6 +74,19 @@ namespace DocKick.Services.Blobs
             return await _blobDataService.GetBlobsByUserId(userId, GetBlobUrl);
         }
 
+        public async Task DeleteBlob(Guid blobId)
+        {
+            ExceptionHelper.ThrowArgumentNullIfEmpty(blobId, nameof(blobId));
+
+            await _blobDataService.Delete(blobId,
+                                          async blob =>
+                                          {
+                                              var client = GetBlobClient(blob.UserId, blob.Name);
+
+                                              await client.DeleteIfExistsAsync();
+                                          });
+        }
+
         private BlobClient GetBlobClient(Guid userId, string blobName)
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(userId, nameof(userId));
@@ -102,11 +115,6 @@ namespace DocKick.Services.Blobs
         private static string GetFullBlobName(Guid userId)
         {
             return $"{userId}/{Guid.NewGuid()}";
-        }
-
-        private static bool IsValidBlobLink(Blob blob)
-        {
-            return blob.BlobLink is not null && !blob.BlobLink.Url.IsEmpty() && blob.BlobLink.ExpirationDate < DateTimeOffset.Now;
         }
     }
 }

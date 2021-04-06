@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DocKick.Data.Repositories
@@ -20,5 +21,11 @@ namespace DocKick.Data.Repositories
         Task Save();
 
         IQueryable<TEntity> GetAllWithTracking();
+
+        Task ExecuteInTransaction(Action action);
+
+        Task ExecuteInTransaction(Func<Task> func);
+
+        void Delete(TEntity entity);
     }
 }

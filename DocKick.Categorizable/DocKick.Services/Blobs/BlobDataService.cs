@@ -73,18 +73,29 @@ namespace DocKick.Services.Blobs
             return _mapper.Map<BlobModel>(updatedEntity);
         }
 
-        public async Task Delete(Guid blobId)
+        public async Task Delete(Guid blobId, Func<Blob, Task> func = null)
         {
             ExceptionHelper.ThrowArgumentNullIfEmpty(blobId, nameof(blobId));
 
-            var blobEntity = await _repository.GetById(blobId);
+            await _repository.ExecuteInTransaction(async () =>
+                                                   {
+                                                       var blobEntity = await _repository.GetById(blobId);
 
-            if (blobEntity is null)
-            {
-                return;
-            }
+                                                       if (blobEntity is null)
+                                                       {
+                                                           return;
+                                                       }
 
-            await _repository.Delete(blobId);
+                                                       if (!func.IsEmpty())
+                                                       {
+                                                           await func(blobEntity);
+                                                       }
+
+
+                                                       _repository.Delete(blobEntity);
+                                                       await _repository.Save();
+                                                   });
+
         }
 
         public async Task<BlobModel> GenerateBlobLink(Guid blobId, BlobCallback blobCallback)

@@ -13,5 +13,7 @@ namespace DocKick.Services.Blobs
         Task<BlobModel> GenerateBlobLink(Guid blobId);
 
         Task<IReadOnlyCollection<BlobModel>> GetBlobsByUserId(Guid userId);
+
+        Task DeleteBlob(Guid blobId);
     }
 }

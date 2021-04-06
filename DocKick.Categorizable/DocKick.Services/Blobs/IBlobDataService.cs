@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DocKick.Dtos.Blobs;
+using DocKick.Entities.Blobs;
 
 namespace DocKick.Services.Blobs
 {
@@ -13,8 +14,8 @@ namespace DocKick.Services.Blobs
 
         Task<BlobModel> Update(Guid id, BlobModel model);
 
-        Task Delete(Guid blobId);
-
         Task<BlobModel> GenerateBlobLink(Guid blobId, BlobCallback blobCallback);
+
+        Task Delete(Guid blobId, Func<Blob, Task> func = null);
     }
 }
